@@ -2,7 +2,7 @@
     <string name="app_name">PerfectBite</string>
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World!</string>
-    <string name="title_activity_notification">NotificationActivity</string>
+    <string name="title_activity_recommendation">RecommendationActivity</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

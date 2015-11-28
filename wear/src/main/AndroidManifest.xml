@@ -19,8 +19,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".NotificationActivity"
-            android:label="@string/title_activity_notification" >
+            android:name=".RecommendationActivity"
+            android:label="@string/title_activity_recommendation" >
         </activity>
         <activity
             android:name=".EditMetricsActivity"
@@ -29,10 +29,6 @@
         <activity
             android:name=".MetricsActivity"
             android:label="@string/title_activity_metrics" >
-        </activity>
-        <activity
-            android:name=".EditMetrics"
-            android:label="@string/title_activity_edit_metrics" >
         </activity>
     </application>
 

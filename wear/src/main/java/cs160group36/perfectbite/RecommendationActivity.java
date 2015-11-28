@@ -6,30 +6,29 @@ import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 
-public class EditMetricsActivity extends Activity  implements GestureDetector.OnGestureListener,
+public class RecommendationActivity extends Activity implements GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener, View.OnTouchListener {
 
-    String DEBUG_TAG = "EditMetricsActivity";
+    String DEBUG_TAG = "RecommendationActivity";
     private GestureDetectorCompat mDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_metrics);
+        setContentView(R.layout.activity_recommendation);
+
         // For now
         ImageButton m = (ImageButton) findViewById(R.id.imageButton);
         m.setOnTouchListener(this);
-        mDetector = new GestureDetectorCompat(this, this);
+        mDetector = new GestureDetectorCompat(this,this);
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(MotionEvent event){
         this.mDetector.onTouchEvent(event);
         // Be sure to call the superclass implementation
         return super.onTouchEvent(event);
@@ -56,15 +55,17 @@ public class EditMetricsActivity extends Activity  implements GestureDetector.On
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
                             float distanceY) {
-        Log.d(DEBUG_TAG, "onScroll: " + e1.toString() + e2.toString());
+        Log.d(DEBUG_TAG, "onScroll: " + e1.toString()+e2.toString());
         float sensitivity = 10;
-        if ((e1.getY() - e2.getY()) > sensitivity) {
-            //Nothing
-        } else if ((e2.getY() - e1.getY()) > sensitivity) {
-            // Swipe (Metrics)
+        if ((e1.getY() - e2.getY()) > sensitivity){
+            // Swipe (Metric)
             Intent i = new Intent(this, MetricsActivity.class);
             startActivity(i);
+        } else if ((e2.getY() - e1.getY()) > sensitivity){
+            // Swipe
         }
+
+
         return true;
     }
 
