@@ -6,17 +6,22 @@ import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
+
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
 
 public class EditMetricsActivity extends Activity  implements GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener, View.OnTouchListener {
 
     String DEBUG_TAG = "EditMetricsActivity";
     private GestureDetectorCompat mDetector;
+    private GoogleApiClient mApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +31,20 @@ public class EditMetricsActivity extends Activity  implements GestureDetector.On
         ImageButton m = (ImageButton) findViewById(R.id.imageButton);
         m.setOnTouchListener(this);
         mDetector = new GestureDetectorCompat(this, this);
+        mApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(Bundle connectionHint) {
+                        /* Successfully connected */
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int cause) {
+                        /* Connection was interrupted */
+                    }
+                })
+                .build();
     }
 
     @Override
@@ -100,6 +119,26 @@ public class EditMetricsActivity extends Activity  implements GestureDetector.On
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         mDetector.onTouchEvent(event);
+        mApiClient.connect();
+        sendMessage("WatchtoPhone", "MetricUpdate");
+        Log.d("TouchHeard", "SendingMessage");
+        Intent i = new Intent(this, MetricsActivity.class);
+        startActivity(i);
         return false;
     }
+
+    private void sendMessage( final String path, final String text ) {
+        new Thread( new Runnable() {
+            @Override
+            public void run() {
+                Log.d("SendingMessage", "MessageBeingSent");
+                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+                for(Node node : nodes.getNodes()) {
+                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
+                            mApiClient, node.getId(), path, text.getBytes() ).await();
+                }
+            }
+        }).start();
+    }
+
 }
