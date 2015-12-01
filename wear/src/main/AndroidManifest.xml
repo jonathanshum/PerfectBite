@@ -30,6 +30,12 @@
             android:name=".MetricsActivity"
             android:label="@string/title_activity_metrics" >
         </activity>
+
+        <service
+            android:name=".WatchListenerService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>
