@@ -101,6 +101,8 @@ public class MetricsActivity extends Activity implements GestureDetector.OnGestu
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         mDetector.onTouchEvent(event);
+        Intent i = new Intent(this, EditMetricsActivity.class);
+        startActivity(i);
         return false;
     }
 }
