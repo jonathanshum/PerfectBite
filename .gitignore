@@ -5,3 +5,5 @@
 .DS_Store
 /build
 /captures
+mobile/mobile.iml
+.idea/gradle.xml
