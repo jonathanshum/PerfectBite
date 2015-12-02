@@ -1,9 +1,18 @@
 package cs160group36.perfectbite;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
+
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -13,17 +22,20 @@ public class RecommendationService extends Service {
     //there is a boolean that knows if you have inputted food in the last 2 hours
     //would be taken from the database. For now, I am using this as a placeholder
     boolean eatenRecently = false;
+    private GoogleApiClient mApiClient;
 
     //Map of nutrients that the user is tracking.
     //Has value(percentage of goal) and name of nutrient
     //Would be taken from the database, for now this is a placeholder
     Map<String, Integer> nutrients = new HashMap<String, Integer>();
-
+    String toSend;
     public RecommendationService() {
+        toSend = "nothing";
     }
 
     public void onCreate() {
         String mealMessage = "";
+        //dummy nutrient values for now
         nutrients.put("Protein",50);
         nutrients.put("Carbohydrates",20);
         nutrients.put("Fat",30);
@@ -57,10 +69,70 @@ public class RecommendationService extends Service {
         message += nutrientNeeded + ".";
         String finalmessage = mealMessage + "\n" + message;
         System.out.println(finalmessage);//The notification to send to watch, send at intervals for now?
+        toSend = finalmessage;
+        //notifyWatch();
+
+        mApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(Bundle connectionHint) {
+                        /* Successfully connected */
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int cause) {
+                        /* Connection was interrupted */
+                    }
+                })
+                .build();
+
+        mApiClient.connect();
+        sendMessage("WatchtoPhone", toSend);
     }
+
+    private void sendMessage( final String path, final String text ) {
+        Log.d("got here", "something");
+        new Thread( new Runnable() {
+            @Override
+            public void run() {
+                Log.d("SendingMessage", "MessageBeingSent");
+                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+                for(Node node : nodes.getNodes()) {
+                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
+                            mApiClient, node.getId(), path, text.getBytes() ).await();
+                }
+            }
+        }).start();
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void notifyWatch() {
+        // Create a WearableExtender to add functionality for wearables
+        android.support.v4.app.NotificationCompat.WearableExtender wearableExtender =
+                new android.support.v4.app.NotificationCompat.WearableExtender()
+                        .setHintHideIcon(true);
+
+        // Create a NotificationCompat.Builder to build a standard notification
+        // then extend it with the WearableExtender
+        Notification notif = new android.support.v4.app.NotificationCompat.Builder(this)
+                .setContentTitle("Title")
+                .setContentText(toSend)
+                .setSmallIcon(R.drawable.gear)
+                .extend(wearableExtender)
+                .build();
+
+        // Get an instance of the NotificationManager service
+        NotificationManagerCompat notificationManager =
+                NotificationManagerCompat.from(this);
+
+        // Issue the notification with notification manager.
+        notificationManager.notify(28, notif);
+        Log.d("notified", "hope");
     }
 }
