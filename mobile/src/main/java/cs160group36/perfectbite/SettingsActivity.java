@@ -1,17 +1,14 @@
 package cs160group36.perfectbite;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -28,15 +25,18 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         final ListView listview = (ListView) findViewById(R.id.listView);
-        String[] values = new String[] { "Name", "Categories", "Goals"};
+        String[] values = new String[] { "Account Setup", "My Goals", "Help"};
         final ArrayList<String> list = new ArrayList<String>();
         for (int i = 0; i < values.length; ++i) {
             list.add(values[i]);
         }
-        final ArrayAdapter adapter = new ArrayAdapter(this,
-                android.R.layout.simple_list_item_1, list);
-        listview.setAdapter(adapter);
+        ArrayAdapter itemsAdapter;
+        itemsAdapter =
+                new myAdapter(this, android.R.layout.simple_list_item_1);
 
+        itemsAdapter.addAll(values);
+        ListView listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(itemsAdapter);
         ImageView settings = (ImageView) findViewById(R.id.homeView);
         settings.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -47,3 +47,24 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 }
+
+class myAdapter extends ArrayAdapter {
+    public myAdapter(Context context, int resource) {
+        super(context, resource);
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View view = super.getView(position, convertView, parent);
+        if (position % 2 == 1) {
+            view.setBackgroundColor(Color.parseColor("#59C0E3"));
+        } else {
+            view.setBackgroundColor(Color.parseColor("#5094AB"));
+        }
+        return view;
+    }
+
+
+
+}
+
