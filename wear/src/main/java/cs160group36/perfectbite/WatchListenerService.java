@@ -33,7 +33,7 @@ public class WatchListenerService extends WearableListenerService {
 
         int notificationId = 001;
         // Build intent for notification content
-        Intent viewIntent = new Intent(this, RecommendationActivity.class);
+        Intent viewIntent = new Intent(this, MetricsActivity.class);
         //viewIntent.putExtra(EXTRA_EVENT_ID, eventId);
         PendingIntent viewPendingIntent =
                 PendingIntent.getActivity(this, 0, viewIntent, 0);

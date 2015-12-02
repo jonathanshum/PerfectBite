@@ -88,7 +88,7 @@ public class RecommendationService extends Service {
                 .build();
 
         mApiClient.connect();
-        sendMessage("WatchtoPhone", toSend);
+        sendMessage("Recommendation", toSend);
     }
 
     private void sendMessage( final String path, final String text ) {
