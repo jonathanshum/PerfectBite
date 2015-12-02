@@ -1,144 +1,231 @@
 package cs160group36.perfectbite;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.annotation.SuppressLint;
+import android.graphics.PointF;
+import android.graphics.RectF;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
-import com.google.android.gms.wearable.Wearable;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.Legend.LegendPosition;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.XAxis.XAxisPosition;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.DataSet;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.filter.Approximator;
+import com.github.mikephil.charting.data.filter.Approximator.ApproximatorType;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
-public class EditMetricsActivity extends Activity  implements GestureDetector.OnGestureListener,
-        GestureDetector.OnDoubleTapListener, View.OnTouchListener {
-
+import java.util.ArrayList;
+public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeListener,
+        OnChartValueSelectedListener {
     String DEBUG_TAG = "EditMetricsActivity";
     private GestureDetectorCompat mDetector;
-    private GoogleApiClient mApiClient;
+
+    protected BarChart mChart;
+    // private SeekBar mSeekBarX, mSeekBarY;
+    // private TextView tvX, tvY;
+
+    //private Typeface tf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_metrics);
-        // For now
-        ImageButton m = (ImageButton) findViewById(R.id.imageButton);
-        m.setOnTouchListener(this);
-        mDetector = new GestureDetectorCompat(this, this);
-        mApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(Bundle connectionHint) {
-                        /* Successfully connected */
-                    }
+        setContentView(R.layout.activity_metrics_detailed);
 
-                    @Override
-                    public void onConnectionSuspended(int cause) {
-                        /* Connection was interrupted */
-                    }
-                })
-                .build();
+        mChart = (BarChart) findViewById(R.id.chart1);
+        mChart.setOnChartValueSelectedListener(this);
+        mChart.setDrawBarShadow(false);
+
+        mChart.setDrawValueAboveBar(true);
+        mChart.setDescription("");
+        mChart.setMaxVisibleValueCount(60);
+        mChart.setPinchZoom(false);
+        mChart.setDrawGridBackground(false);
+
+        XAxis xl = mChart.getXAxis();
+        xl.setPosition(XAxisPosition.BOTTOM);
+        xl.setDrawAxisLine(true);
+        xl.setDrawGridLines(true);
+        xl.setGridLineWidth(0.3f);
+
+        setData(3, 50);
+        mChart.animateY(2500);
+
+        Legend l = mChart.getLegend();
+        l.setPosition(LegendPosition.BELOW_CHART_LEFT);
+        l.setFormSize(8f);
+        l.setXEntrySpace(4f);
+
+        mChart.getLegend().setEnabled(false);
+        mChart.getAxisLeft().setEnabled(false);
+        mChart.getAxisRight().setEnabled(false);
+
+
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        this.mDetector.onTouchEvent(event);
-        // Be sure to call the superclass implementation
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    public boolean onDown(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onDown: " + event.toString());
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.bar, menu);
         return true;
     }
 
     @Override
-    public boolean onFling(MotionEvent event1, MotionEvent event2,
-                           float velocityX, float velocityY) {
-        Log.d(DEBUG_TAG, "onFling: " + event1.toString() + event2.toString());
-        return true;
-    }
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-    @Override
-    public void onLongPress(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onLongPress: " + event.toString());
-    }
+        switch (item.getItemId()) {
+            case R.id.actionToggleValues: {
+                for (DataSet<?> set : mChart.getData().getDataSets())
+                    set.setDrawValues(!set.isDrawValuesEnabled());
 
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-                            float distanceY) {
-        Log.d(DEBUG_TAG, "onScroll: " + e1.toString() + e2.toString());
-        float sensitivity = 10;
-        if ((e1.getY() - e2.getY()) > sensitivity) {
-            //Nothing
-        } else if ((e2.getY() - e1.getY()) > sensitivity) {
-            // Swipe (Metrics)
-            Intent i = new Intent(this, MetricsActivity.class);
-            startActivity(i);
+                mChart.invalidate();
+                break;
+            }
+            case R.id.actionToggleHighlight: {
+                if(mChart.getData() != null) {
+                    mChart.getData().setHighlightEnabled(!mChart.getData().isHighlightEnabled());
+                    mChart.invalidate();
+                }
+                break;
+            }
+            case R.id.actionTogglePinch: {
+                if (mChart.isPinchZoomEnabled())
+                    mChart.setPinchZoom(false);
+                else
+                    mChart.setPinchZoom(true);
+
+                mChart.invalidate();
+                break;
+            }
+            case R.id.actionToggleAutoScaleMinMax: {
+                mChart.setAutoScaleMinMaxEnabled(!mChart.isAutoScaleMinMaxEnabled());
+                mChart.notifyDataSetChanged();
+                break;
+            }
+            case R.id.actionToggleHighlightArrow: {
+                if (mChart.isDrawHighlightArrowEnabled())
+                    mChart.setDrawHighlightArrow(false);
+                else
+                    mChart.setDrawHighlightArrow(true);
+                mChart.invalidate();
+                break;
+            }
+            case R.id.actionToggleStartzero: {
+                mChart.getAxisLeft().setStartAtZero(!mChart.getAxisLeft().isStartAtZeroEnabled());
+                mChart.getAxisRight().setStartAtZero(!mChart.getAxisRight().isStartAtZeroEnabled());
+                mChart.invalidate();
+                break;
+            }
+            case R.id.animateX: {
+                mChart.animateX(3000);
+                break;
+            }
+            case R.id.animateY: {
+                mChart.animateY(3000);
+                break;
+            }
+            case R.id.animateXY: {
+
+                mChart.animateXY(3000, 3000);
+                break;
+            }
+            case R.id.actionToggleFilter: {
+
+                Approximator a = new Approximator(ApproximatorType.DOUGLAS_PEUCKER, 25);
+
+                if (!mChart.isFilteringEnabled()) {
+                    mChart.enableFiltering(a);
+                } else {
+                    mChart.disableFiltering();
+                }
+                mChart.invalidate();
+                break;
+            }
+            case R.id.actionSave: {
+                if (mChart.saveToGallery("title" + System.currentTimeMillis(), 50)) {
+                    Toast.makeText(getApplicationContext(), "Saving SUCCESSFUL!",
+                            Toast.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(getApplicationContext(), "Saving FAILED!", Toast.LENGTH_SHORT)
+                            .show();
+                break;
+            }
         }
         return true;
     }
 
     @Override
-    public void onShowPress(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onShowPress: " + event.toString());
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        mChart.invalidate();
     }
 
     @Override
-    public boolean onSingleTapUp(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onSingleTapUp: " + event.toString());
-        return true;
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        // TODO Auto-generated method stub
+
     }
 
     @Override
-    public boolean onDoubleTap(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onDoubleTap: " + event.toString());
-        return true;
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        // TODO Auto-generated method stub
+
     }
 
+    private void setData(int count, float range) {
+        ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
+        ArrayList<String> xVals = new ArrayList<String>();
+        for (int i = 0; i < count; i++) {
+            xVals.add(mMonths[i % 12]);
+            yVals1.add(new BarEntry((float) (Math.random() * range), i));
+        }
+        BarDataSet set1 = new BarDataSet(yVals1, "DataSet 1");
+        ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
+        dataSets.add(set1);
+        BarData data = new BarData(xVals, dataSets);
+        data.setValueTextSize(10f);
+        mChart.setData(data);
+    }
+
+    @SuppressLint("NewApi")
     @Override
-    public boolean onDoubleTapEvent(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onDoubleTapEvent: " + event.toString());
-        return true;
+    public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
+        if (e == null)
+            return;
+        RectF bounds = mChart.getBarBounds((BarEntry) e);
+        PointF position = mChart.getPosition(e, mChart.getData().getDataSetByIndex(dataSetIndex)
+                .getAxisDependency());
+        Log.i("bounds", bounds.toString());
+        Log.i("position", position.toString());
     }
 
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onSingleTapConfirmed: " + event.toString());
-        return true;
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        mDetector.onTouchEvent(event);
-        mApiClient.connect();
-        sendMessage("WatchtoPhone", "MetricUpdate");
-        Log.d("TouchHeard", "SendingMessage");
-        Intent i = new Intent(this, MetricsActivity.class);
-        startActivity(i);
-        return false;
-    }
-
-    private void sendMessage( final String path, final String text ) {
-        new Thread( new Runnable() {
-            @Override
-            public void run() {
-                Log.d("SendingMessage", "MessageBeingSent");
-                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
-                for(Node node : nodes.getNodes()) {
-                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
-                            mApiClient, node.getId(), path, text.getBytes() ).await();
-                }
-            }
-        }).start();
-    }
-
+    public void onNothingSelected() {
+    };
 }
