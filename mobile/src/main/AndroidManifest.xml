@@ -28,6 +28,9 @@
             android:name=".EditMetricsActivity"
             android:label="@string/title_activity_edit_metrics" >
         </activity>
+        <activity
+            android:name=".DatabaseActivity">
+        </activity>
 
         <service
             android:name=".RecommendationService"
