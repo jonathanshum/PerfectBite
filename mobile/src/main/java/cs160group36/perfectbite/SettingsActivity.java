@@ -1,19 +1,20 @@
 package cs160group36.perfectbite;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageButton;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
 
-public class SettingsActivity extends AppCompatActivity implements GestureDetector.OnGestureListener,
-        GestureDetector.OnDoubleTapListener, View.OnTouchListener {
+import java.util.ArrayList;
+
+public class SettingsActivity extends AppCompatActivity {
 
     String DEBUG_TAG = "SettingsActivity";
     private GestureDetectorCompat mDetector;
@@ -23,85 +24,47 @@ public class SettingsActivity extends AppCompatActivity implements GestureDetect
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        // For now, swipe right will go to metrics
-        ImageButton m = (ImageButton) findViewById(R.id.imageButton);
-        m.setOnTouchListener(this);
-        mDetector = new GestureDetectorCompat(this,this);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event){
-        this.mDetector.onTouchEvent(event);
-        // Be sure to call the superclass implementation
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    public boolean onDown(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onDown: " + event.toString());
-        return true;
-    }
-
-    @Override
-    public boolean onFling(MotionEvent event1, MotionEvent event2,
-                           float velocityX, float velocityY) {
-        Log.d(DEBUG_TAG, "onFling: " + event1.toString() + event2.toString());
-        float sensitivity = 50;
-        if ((event1.getX() - event2.getX()) > sensitivity){
-            // Swipe Left
-        } else if ((event2.getX() - event1.getX()) > sensitivity){
-            // Swipe Right (Metric)
-            Intent i = new Intent(this, MetricsActivity.class);
-            startActivity(i);
+        final ListView listview = (ListView) findViewById(R.id.listView);
+        String[] values = new String[] { "Account Setup", "My Goals", "Help"};
+        final ArrayList<String> list = new ArrayList<String>();
+        for (int i = 0; i < values.length; ++i) {
+            list.add(values[i]);
         }
+        ArrayAdapter itemsAdapter;
+        itemsAdapter =
+                new myAdapter(this, android.R.layout.simple_list_item_1);
 
-        return true;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onLongPress: " + event.toString());
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-                            float distanceY) {
-        Log.d(DEBUG_TAG, "onScroll: " + e1.toString()+e2.toString());
-        return true;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onShowPress: " + event.toString());
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onSingleTapUp: " + event.toString());
-        return true;
-    }
-
-    @Override
-    public boolean onDoubleTap(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onDoubleTap: " + event.toString());
-        return true;
-    }
-
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onDoubleTapEvent: " + event.toString());
-        return true;
-    }
-
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onSingleTapConfirmed: " + event.toString());
-        return true;
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        mDetector.onTouchEvent(event);
-        return false;
+        itemsAdapter.addAll(values);
+        ListView listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(itemsAdapter);
+        ImageView settings = (ImageView) findViewById(R.id.homeView);
+        settings.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), MetricsActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
     }
 }
+
+class myAdapter extends ArrayAdapter {
+    public myAdapter(Context context, int resource) {
+        super(context, resource);
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View view = super.getView(position, convertView, parent);
+        if (position % 2 == 1) {
+            view.setBackgroundColor(Color.parseColor("#59C0E3"));
+        } else {
+            view.setBackgroundColor(Color.parseColor("#5094AB"));
+        }
+        return view;
+    }
+
+
+
+}
+

@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cs160group36.perfectbite.MainActivity">
+    tools:context="cs160group36.perfectbite.MainActivity"
+    android:background="@color/blue">
 
     <ImageView
         android:layout_width="wrap_content"

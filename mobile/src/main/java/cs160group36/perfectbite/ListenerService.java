@@ -18,11 +18,16 @@ public class ListenerService extends WearableListenerService {
 //            Intent intent = new Intent(this, InstaService.class);
 //            startService(intent);
         Log.d("getting here", "Starting Activity");
+        String path = messageEvent.getPath();
+        if (path.equalsIgnoreCase("WatchtoPhone")){
+            Toast.makeText(getApplicationContext(), "Metric Data Updated", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, MetricsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
 
-        Intent metricUpdate = new Intent(this, MainActivity.class);
-        startActivity(metricUpdate);
 
-        Toast.makeText(getApplicationContext(), "Metric Data Updated", Toast.LENGTH_SHORT).show();
+
 
 
     }
