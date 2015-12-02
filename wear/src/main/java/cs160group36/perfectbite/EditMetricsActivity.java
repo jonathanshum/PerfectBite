@@ -43,12 +43,18 @@ import com.github.mikephil.charting.data.filter.Approximator.ApproximatorType;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
 public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeListener,
         OnChartValueSelectedListener {
     String DEBUG_TAG = "EditMetricsActivity";
     private GestureDetectorCompat mDetector;
+    private GoogleApiClient mApiClient;
 
     protected BarChart mChart;
     // private SeekBar mSeekBarX, mSeekBarY;
@@ -89,6 +95,21 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         mChart.getAxisLeft().setEnabled(false);
         mChart.getAxisRight().setEnabled(false);
 
+
+        mApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(Bundle connectionHint) {
+                        /* Successfully connected */
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int cause) {
+                        /* Connection was interrupted */
+                    }
+                })
+                .build();
 
     }
 
@@ -224,8 +245,25 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
                 .getAxisDependency());
         Log.i("bounds", bounds.toString());
         Log.i("position", position.toString());
+        mApiClient.connect();
+        sendMessage("WatchtoPhone", "MessageSentToPhone");
     }
 
     public void onNothingSelected() {
     };
+
+    private void sendMessage( final String path, final String text ) {
+        Log.d("got here", "something");
+        new Thread( new Runnable() {
+            @Override
+            public void run() {
+                Log.d("SendingMessage", "MessageBeingSent");
+                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+                for(Node node : nodes.getNodes()) {
+                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
+                            mApiClient, node.getId(), path, text.getBytes() ).await();
+                }
+            }
+        }).start();
+    }
 }
