@@ -1,5 +1,6 @@
 package cs160group36.perfectbite;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -14,11 +15,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
@@ -39,6 +43,10 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         OnChartValueSelectedListener {
 
     private PieChart mChart;
+    public static final int[] BLUE_COLORS = {
+            Color.parseColor("#6B9FD2"), Color.parseColor("#5C6BC0"), Color.parseColor("#0D47A1"),
+            Color.parseColor("#00B8D4"), Color.parseColor("#303F9F"), Color.parseColor("#0091EA")
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +80,24 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         Legend l = mChart.getLegend();
         mChart.getLegend().setEnabled(false);
 
+        addListenerOnButton();
+    }
+
+    public void addListenerOnButton() {
+        ImageButton button = (ImageButton) findViewById(R.id.button);
+        button.bringToFront();
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MetricsActivity.this);
+                builder.setMessage("Servings?")
+                        .setTitle("Voice Search");
+                builder.setPositiveButton("OK", null);
+                builder.setNegativeButton("Cancel", null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
     }
 
     @Override
@@ -161,7 +187,7 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         dataSet.setSelectionShift(5f);
 
         ArrayList<Integer> colors = new ArrayList<Integer>();
-        for (int c : ColorTemplate.LIBERTY_COLORS)
+        for (int c : BLUE_COLORS)
             colors.add(c);
         colors.add(ColorTemplate.getHoloBlue());
         dataSet.setColors(colors);
@@ -177,7 +203,7 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
     }
 
     private SpannableString generateCenterSpannableText() {
-        SpannableString s = new SpannableString("Search");
+        SpannableString s = new SpannableString("");
         return s;
     }
 

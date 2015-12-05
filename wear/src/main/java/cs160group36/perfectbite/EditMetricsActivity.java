@@ -1,6 +1,7 @@
 package cs160group36.perfectbite;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.view.GestureDetectorCompat;
 import android.os.Bundle;
 import android.util.Log;
@@ -56,6 +57,11 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
     private GestureDetectorCompat mDetector;
     private GoogleApiClient mApiClient;
 
+    public static final int[] BLUE_COLORS = {
+            Color.parseColor("#6B9FD2"), Color.parseColor("#5C6BC0"), Color.parseColor("#0D47A1"),
+            Color.parseColor("#00B8D4"), Color.parseColor("#303F9F"), Color.parseColor("#0091EA")
+    };
+
     protected BarChart mChart;
     // private SeekBar mSeekBarX, mSeekBarY;
     // private TextView tvX, tvY;
@@ -80,8 +86,8 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         XAxis xl = mChart.getXAxis();
         xl.setPosition(XAxisPosition.BOTTOM);
         xl.setDrawAxisLine(true);
-        xl.setDrawGridLines(true);
-        xl.setGridLineWidth(0.3f);
+        xl.setDrawGridLines(false);
+        xl.setGridLineWidth(0.0f);
 
         setData(3, 50);
         mChart.animateY(2500);
@@ -111,6 +117,18 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
                 })
                 .build();
 
+        addListenerOnButton();
+    }
+
+    public void addListenerOnButton() {
+        ImageButton button = (ImageButton) findViewById(R.id.button);
+        button.bringToFront();
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                finish();
+            }
+        });
     }
 
     @Override
@@ -217,7 +235,6 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         // TODO Auto-generated method stub
-
     }
 
     private void setData(int count, float range) {
@@ -228,10 +245,19 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
             yVals1.add(new BarEntry((float) (Math.random() * range), i));
         }
         BarDataSet set1 = new BarDataSet(yVals1, "DataSet 1");
+
+        ArrayList<Integer> colors = new ArrayList<Integer>();
+        for (int c : BLUE_COLORS)
+            colors.add(c);
+        colors.add(ColorTemplate.getHoloBlue());
+        set1.setColors(colors);
+
+
         ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
         dataSets.add(set1);
         BarData data = new BarData(xVals, dataSets);
         data.setValueTextSize(10f);
+
         mChart.setData(data);
     }
 

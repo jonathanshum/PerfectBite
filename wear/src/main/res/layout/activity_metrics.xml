@@ -4,11 +4,17 @@
     android:background="@color/white"
     tools:context="cs160group36.perfectbite.MetricsActivity">
 
-
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/chart1"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <ImageButton
+        android:layout_width="45dip"
+        android:layout_height="45dip"
+        android:background="@drawable/micgray"
+        android:id="@+id/button"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

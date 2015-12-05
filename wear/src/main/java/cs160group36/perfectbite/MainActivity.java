@@ -24,7 +24,9 @@ public class MainActivity extends Activity {
                 startActivity(i);
             }
         });
+
         Intent intent = new Intent(this, WatchListenerService.class);
         startService(intent);
+
     }
 }
