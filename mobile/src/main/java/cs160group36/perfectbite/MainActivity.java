@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        //Intent intent = new Intent(this, RecommendationService.class);
-        //startService(intent);
+        Intent intent = new Intent(this, RecommendationService.class);
+        startService(intent);
     }
 }
