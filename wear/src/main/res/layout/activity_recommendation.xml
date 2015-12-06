@@ -16,7 +16,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/imageButton"
         android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/textView"
         android:scaleType="fitXY"/>
 
 </RelativeLayout>
