@@ -28,6 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //table for data about food consumed; shares some column names with the above table
     public static final String TABLE2_NAME = "log";
     public static final String KEY_DATE = "date";
+    public static final String KEY_TIME = "time";
 
     //table for goal information
     public static final String TABLE3_NAME = "usergoals";
@@ -53,6 +54,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + KEY_ROWID + " integer primary key autoincrement,  "
                     + KEY_FOODNAME + " text, "
                     + KEY_DATE + " text, "
+                    + KEY_TIME + " text, "
                     + KEY_CAL + " integer, "
                     + KEY_FAT + " integer, "
                     + KEY_CARB + " integer, "
@@ -145,10 +147,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    /*  Inserts data into the log given the food name, the date, and the number of servings consumed.
+    /*  Inserts data into the log given the food name, the date, the time, and the number of servings consumed.
         Returns false if the insertion fails. Otherwise, returns true.
      */
-    public boolean insertLogData(SQLiteDatabase db, String name, String date, double servings) {
+    public boolean insertLogData(SQLiteDatabase db, String name, String date, String time, double servings) {
         Cursor data = this.fetchDataFromName(db, name);
         if (data.getCount() == 0) {
             return false;
@@ -156,6 +158,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(KEY_FOODNAME, name);
         contentValues.put(KEY_DATE, date);
+        contentValues.put(KEY_TIME, time);
 
         Map<String, Integer> categories = new HashMap<String, Integer>();
         categories.put(KEY_CAL, 0);
@@ -190,11 +193,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    /*  Deletes all instances of food consumed on the given date with the given name from the log.
+    /*  Deletes the instance of food consumed on the given date and time with the given name from the log.
      */
-    public void deleteLogData(SQLiteDatabase db, String name, String date) {
-        String whereClause = KEY_FOODNAME + " = ? and " + KEY_DATE + " = ?";
-        String[] whereArgs = new String[] {name, date};
+    public void deleteLogData(SQLiteDatabase db, String name, String date, String time) {
+        String whereClause = KEY_FOODNAME + " = ? and " + KEY_DATE + " = ? and " + KEY_TIME + " = ?";
+        String[] whereArgs = new String[] {name, date, time};
         db.delete(TABLE2_NAME, whereClause, whereArgs);
     }
 
@@ -212,6 +215,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String[] whereArgs = new String[] {date};
         Cursor c = db.query(TABLE2_NAME, null, whereClause, whereArgs, null, null, null);
         return c;
+    }
+
+    /*  Calculates the progress towards current goals for the log data for the given date.
+        Returns a mapping from category name (string) to fractional progress (double).
+        The fractional progress is equal to the total amount consumed for the category for the given date
+        divided by the goal amount. If this progress is greater than 1, the goal has been surpassed.
+     */
+    public Map<String, Double> getProgressTowardGoals(SQLiteDatabase db, String date) {
+        Cursor logData = this.fetchLogDataFromDate(db, date);
+        Cursor goals = this.fetchGoals(db);
+        Map<String, Double> progress = new HashMap<String, Double>();
+        for (logData.moveToFirst(); !logData.isAfterLast(); logData.moveToNext()) {
+            for (goals.moveToFirst(); !goals.isAfterLast(); goals.moveToNext()) {
+                String category = goals.getString(goals.getColumnIndex(KEY_CATEGORY));
+                int value = logData.getInt(logData.getColumnIndex(category));
+                int goalValue = goals.getInt(goals.getColumnIndex(KEY_VALUE));
+                double fractionOfGoal = value / (double)goalValue; //cast to double for floating point calculation
+                progress.put(category, fractionOfGoal);
+            }
+        }
+        logData.close();
+        goals.close();
+        return progress;
+    }
+
+    /*  Finds the lowest fractional progress towards the current goals for the given date.
+        Returns the name of the category with the lowest progress. If all fractional progresses are greater
+        than or equal to 1 (all goals have been passed), returns "all goals passed" instead.
+     */
+    public String getLowestProgress(SQLiteDatabase db, String date) {
+        Map<String, Double> progress = this.getProgressTowardGoals(db, date);
+        double min = 1.0;
+        String lowest = "all goals passed";
+        for (Map.Entry<String, Double> entry : progress.entrySet()) {
+            if (entry.getValue() < min) {
+                min = entry.getValue();
+                lowest = entry.getKey();
+            }
+        }
+        return lowest;
     }
 
     /*  Inserts default goals. This method should be called upon creation of the database.
