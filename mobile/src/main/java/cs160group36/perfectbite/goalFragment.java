@@ -1,5 +1,6 @@
 package cs160group36.perfectbite;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -44,7 +45,13 @@ public class goalFragment extends Fragment {
         setValues(view, numGoals, goalTitle, goalDesc, goalProg, currPos);
 
 
-
+        ImageView add = (ImageView) view.findViewById(R.id.addFood);
+        add.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), AddGoalActivity.class);
+                startActivity(i);
+            }
+        });
 
         return view;
 
@@ -52,8 +59,8 @@ public class goalFragment extends Fragment {
     }
 
     private void setValues(View view, String numGoals, String goalTitle, String goalDesc, String goalProg, String currPos){
-        ImageView imageView = (ImageView) view.findViewById(R.id.goalImageView);
-        imageView.setImageResource(R.drawable.trash);
+//        ImageView imageView = (ImageView) view.findViewById(R.id.goalImageView);
+//        imageView.setImageResource(R.drawable.trash);
 
         TextView goalTitleText = (TextView) view.findViewById(R.id.goalTitleText);
         goalTitleText.setText(goalTitle);
@@ -69,4 +76,6 @@ public class goalFragment extends Fragment {
         statusText.setText(currPos + " of " + numGoals);
 
     }
+
+
 }

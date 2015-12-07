@@ -1,5 +1,8 @@
 package cs160group36.perfectbite;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,24 +18,54 @@ public class GoalPageAdapter extends FragmentPagerAdapter {
     ArrayList<String> titles;
     ArrayList<String> descriptions;
     ArrayList<String> progress;
+    DatabaseHelper myDbHelper;
+    SQLiteDatabase myDb;
 
-    public GoalPageAdapter(FragmentManager fm) {
+
+
+    public static final String TABLE3_NAME = "usergoals";
+    public static final String KEY_CATEGORY = "category";
+    public static final String KEY_GOAL = "isgoal";
+    public static final String KEY_VALUE = "value";
+    public static final String KEY_DESCRIPTION = "description";
+    public static final String KEY_PROGRESS = "progressmessage";
+
+
+    public GoalPageAdapter(FragmentManager fm, Context context) {
         super(fm);
 
+
+        myDbHelper = new DatabaseHelper(context);
+        myDb = myDbHelper.getWritableDatabase();
+
+        Cursor goals = myDbHelper.fetchGoals(myDb);
         titles = new ArrayList<String>();
-        titles.add("Protein");
-        titles.add("Calories");
-        titles.add("Fat");
-
         descriptions = new ArrayList<String>();
-        descriptions.add("Eat 20-30g of Protein per day");
-        descriptions.add("Consume 1500 - 200 calories per day");
-        descriptions.add("Eat less than 70g of Fat per day");
-
         progress = new ArrayList<String>();
-        progress.add("Historically you meet your goal on 70% of days.  Deficiencies in protein can lead to exhaustion and headaches.");
-        progress.add("You're doing great! You have eaten an average of 1800 calories per day over the last 2 weeks! Proper calorie intake is essential in maintaining a healthy weight");
-        progress.add("This is a new goal of yours so we don't have much to grade your performance off of.  Keep working hard and eating lean foods!");
+
+
+
+
+        for (goals.moveToFirst(); !goals.isAfterLast(); goals.moveToNext()){
+            String title = goals.getString(goals.getColumnIndex(KEY_CATEGORY));
+            String description = goals.getString(goals.getColumnIndex(KEY_DESCRIPTION));
+            String prog = goals.getString(goals.getColumnIndex(KEY_PROGRESS));
+
+            titles.add(title);
+            descriptions.add(description);
+            progress.add(prog);
+
+        }
+
+//        titles.add("Protein");
+//        titles.add("Calories");
+//        titles.add("Fat");
+//
+//        descriptions.add("Eat 20-30g of Protein per day");
+//        descriptions.add("Consume 1500 - 200 calories per day");
+//        descriptions.add("Eat less than 70g of Fat per day");
+
+
 
 
 
@@ -42,7 +75,7 @@ public class GoalPageAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
 
         Bundle bundle = new Bundle();
-        bundle.putString(goalFragment.goalTitleKey, titles.get(position));
+        bundle.putString(goalFragment.goalTitleKey, "Goal " + (position+1) + " - " + titles.get(position));
         bundle.putString(goalFragment.goalDescKey, descriptions.get(position));
         bundle.putString(goalFragment.goalProgKey, progress.get(position));
         bundle.putString(goalFragment.numGoalsKey, titles.size()+"");

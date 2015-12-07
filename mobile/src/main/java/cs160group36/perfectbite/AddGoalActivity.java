@@ -2,6 +2,7 @@ package cs160group36.perfectbite;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,9 @@ public class AddGoalActivity extends AppCompatActivity {
     String[] type;
     String[] options;
     String currCategory;
+    DatabaseHelper myDbHelper;
+    SQLiteDatabase myDb;
+    int value;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,9 @@ public class AddGoalActivity extends AppCompatActivity {
         options = new String[2];
         options[0] = "less than";
         options [1] = "more than";
+
+        myDbHelper = new DatabaseHelper(getApplicationContext());
+        myDb = myDbHelper.getWritableDatabase();
 
 
         TextView textView = (TextView) findViewById(R.id.consumeText);
@@ -158,6 +165,11 @@ public class AddGoalActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+                TextView textView = (TextView) findViewById(R.id.inputText);
+                String valueString = textView.getText().toString();
+                value = Integer.parseInt(valueString);
+                String progressString;
+                myDbHelper.modifyEntireGoal(myDb, currCategory, 1, value, "Eat less than " + valueString +"g"+" per day", "This goal is too new to give you progress feedback.  Keep eating healthy and we'll have data for you soon!" );
                 Intent intent = new Intent(getApplicationContext(), myGoalsActivity.class);
                 startActivity(intent);
             }

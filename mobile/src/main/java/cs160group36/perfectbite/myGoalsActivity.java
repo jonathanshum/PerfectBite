@@ -1,5 +1,6 @@
 package cs160group36.perfectbite;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -10,14 +11,19 @@ public class myGoalsActivity extends FragmentActivity {
 
     GoalPageAdapter mGoalPageAdapter;
     ViewPager mViewPager;
+    DatabaseHelper myDbHelper;
+    SQLiteDatabase myDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_goals);
         mViewPager = (ViewPager) findViewById(R.id.pager);
-        mGoalPageAdapter = new GoalPageAdapter(getSupportFragmentManager());
+        mGoalPageAdapter = new GoalPageAdapter(getSupportFragmentManager(), getApplicationContext());
         mViewPager.setAdapter(mGoalPageAdapter);
+        myDbHelper = new DatabaseHelper(this);
+        myDb = myDbHelper.getWritableDatabase();
+
     }
 
     @Override
