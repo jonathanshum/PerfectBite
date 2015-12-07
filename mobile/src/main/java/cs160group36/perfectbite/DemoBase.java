@@ -12,7 +12,7 @@ public abstract class DemoBase extends FragmentActivity {
     };
 
     protected String[] mParties = new String[] {
-            "Calories", "Protiens", "Fats", "Carbs", "Sugar"
+            "Calories", "Proteins", "Fats", "Carbs", "Sugar"
     };
 
     @Override

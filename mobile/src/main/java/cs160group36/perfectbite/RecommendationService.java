@@ -17,6 +17,7 @@ import com.google.android.gms.wearable.Wearable;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class RecommendationService extends Service {
     //there is a boolean that knows if you have inputted food in the last 2 hours
@@ -33,28 +34,20 @@ public class RecommendationService extends Service {
         toSend = "nothing";
     }
 
+    @Override
     public void onCreate() {
+
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        double x = Math.random();
+        String finalmessage = "";
         String mealMessage = "";
         //dummy nutrient values for now
-        nutrients.put("Protein",50);
+        nutrients.put("Protein",10);
         nutrients.put("Carbohydrates",20);
-        nutrients.put("Fat",30);
-        Calendar c = Calendar.getInstance();
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        Log.d(Integer.toString(hour), "time");
-        if (hour >= 6 && hour <= 10 && !eatenRecently) {
-            mealMessage += "Now is a good time to eat breakfast.";
-            Log.d("breakfast", "whatmeal");
-        } else if (hour > 10 && hour <= 13 && !eatenRecently) {
-            mealMessage += "Now is a good time to eat lunch.";
-            Log.d("lunch", "whatmeal");
-        } else if (hour >= 16 && hour <=9 && !eatenRecently) {
-            mealMessage += "Now is a good time to eat dinner.";
-            Log.d("dinner", "whatmeal");
-        } else {
-            mealMessage += "If you are hungry, eat a snack.\n If not, wait for the next mealtime.";
-            Log.d("snack?", "whatmeal");
-        }
+        nutrients.put("Fat",15);
 
         Map.Entry<String, Integer> min = null;
         for (Map.Entry<String, Integer> entry : nutrients.entrySet()) {
@@ -62,15 +55,36 @@ public class RecommendationService extends Service {
                 min = entry;
             }
         }
-
         Log.d(min.getKey(), "minnutrient");
         String nutrientNeeded = min.getKey();
-        String message = "Try to eat some ";
-        message += nutrientNeeded + ".";
-        String finalmessage = mealMessage + "\n" + message;
-        System.out.println(finalmessage);//The notification to send to watch, send at intervals for now?
+
+        if (false) {
+            Calendar c = Calendar.getInstance();
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            Log.d(Integer.toString(hour), "time");
+            if (hour >= 6 && hour <= 10 && !eatenRecently) {
+                mealMessage += "Now is a good time to eat breakfast.";
+                Log.d("breakfast", "whatmeal");
+            } else if (hour > 10 && hour <= 13 && !eatenRecently) {
+                mealMessage += "Now is a good time to eat lunch.";
+                Log.d("lunch", "whatmeal");
+            } else if (hour >= 16 && hour <= 9 && !eatenRecently) {
+                mealMessage += "Now is a good time to eat dinner.";
+                Log.d("dinner", "whatmeal");
+            } else {
+                mealMessage += "Now is a good time to eat lunch.";
+                Log.d("lunch", "whatmeal");
+            }
+            String message = "Try to eat some ";
+            message += nutrientNeeded + ".";
+            finalmessage = mealMessage + "\n" + message;
+            System.out.println(finalmessage);
+        } else {
+            finalmessage += "You are low on ";
+            finalmessage += nutrientNeeded + ".";
+        }
+
         toSend = finalmessage;
-        //notifyWatch();
 
         mApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -89,6 +103,7 @@ public class RecommendationService extends Service {
 
         mApiClient.connect();
         sendMessage("Recommendation", toSend);
+        return START_STICKY;
     }
 
     private void sendMessage( final String path, final String text ) {
@@ -110,29 +125,5 @@ public class RecommendationService extends Service {
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    public void notifyWatch() {
-        // Create a WearableExtender to add functionality for wearables
-        android.support.v4.app.NotificationCompat.WearableExtender wearableExtender =
-                new android.support.v4.app.NotificationCompat.WearableExtender()
-                        .setHintHideIcon(true);
-
-        // Create a NotificationCompat.Builder to build a standard notification
-        // then extend it with the WearableExtender
-        Notification notif = new android.support.v4.app.NotificationCompat.Builder(this)
-                .setContentTitle("Title")
-                .setContentText(toSend)
-                .setSmallIcon(R.drawable.gear)
-                .extend(wearableExtender)
-                .build();
-
-        // Get an instance of the NotificationManager service
-        NotificationManagerCompat notificationManager =
-                NotificationManagerCompat.from(this);
-
-        // Issue the notification with notification manager.
-        notificationManager.notify(28, notif);
-        Log.d("notified", "hope");
     }
 }

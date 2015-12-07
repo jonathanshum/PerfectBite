@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         img.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Switch between database, metrics, and setting depending on current settings
-                if (true) {
+                if (false) {
                     Intent i = new Intent(v.getContext(), DatabaseActivity.class);
                     startActivity(i);
                 }
