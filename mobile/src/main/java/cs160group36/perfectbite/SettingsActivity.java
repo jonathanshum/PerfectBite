@@ -6,11 +6,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -67,6 +69,21 @@ public class SettingsActivity extends AppCompatActivity {
 //                        .show();
             }
         });
+        TextView rec = (TextView) findViewById(R.id.recTextView);
+        rec.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.d("Clicked", "clicked");
+                //Intent i = new Intent(v.getContext(), RecommendationService.class);
+                //startActivity(i);
+                //finish();
+                sendRec();
+            }
+        });
+    }
+    public void sendRec() {
+        Intent intent = new Intent(this, RecommendationService.class);
+        startService(intent);
+        Log.d("did it", "clicked");
     }
 }
 

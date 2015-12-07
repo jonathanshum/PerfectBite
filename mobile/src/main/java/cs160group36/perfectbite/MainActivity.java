@@ -28,9 +28,12 @@ public class MainActivity extends AppCompatActivity {
                     Intent i = new Intent(v.getContext(), SettingsActivity.class);
                     startActivity(i);
                 }
+                finish();
             }
         });
-//        Intent intent = new Intent(this, RecommendationService.class);
-//        startService(intent);
+
+        Intent intent = new Intent(this, RecommendationService.class);
+        startService(intent);
+
     }
 }
