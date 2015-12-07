@@ -17,11 +17,11 @@ public class MainActivity extends AppCompatActivity {
         img.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Switch between database, metrics, and setting depending on current settings
-                if (true) {
+                if (false) {
                     Intent i = new Intent(v.getContext(), DatabaseActivity.class);
                     startActivity(i);
                 }
-                else if (true) {
+                else if (false) {
                     Intent i = new Intent(v.getContext(), MetricsActivity.class);
                     startActivity(i);
                 } else {
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        //Intent intent = new Intent(this, RecommendationService.class);
-        //startService(intent);
+//        Intent intent = new Intent(this, RecommendationService.class);
+//        startService(intent);
     }
 }
