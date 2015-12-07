@@ -5,11 +5,17 @@ package cs160group36.perfectbite;
  */
 
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.text.SpannableString;
+import android.text.format.Time;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
@@ -49,10 +55,13 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener,
-        OnChartValueSelectedListener {
+        OnChartValueSelectedListener, TextToSpeech.OnInitListener  {
 
     public static final int[] BLUE_COLORS = {
             Color.parseColor("#6B9FD2"), Color.parseColor("#5C6BC0"), Color.parseColor("#0D47A1"),
@@ -65,12 +74,19 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
     public static final String FIRST_COLUMN="First";
     public static final String SECOND_COLUMN="Second";
     public static final String THIRD_COLUMN="Third";
+    private final int REQ_CODE_SPEECH_INPUT = 100;
+    private TextToSpeech tts;
+//    DatabaseHelper myDbHelper;
+//    SQLiteDatabase myDb;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_metrics);
+
+//        myDbHelper = new DatabaseHelper(this);
+//        myDb = myDbHelper.getWritableDatabase();
 
         mChart = (PieChart) findViewById(R.id.chart1);
         mChart.setUsePercentValues(true);
@@ -107,6 +123,22 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         temp1.put(THIRD_COLUMN, "Time");
         list.add(temp1);
 
+//        GregorianCalendar now = new GregorianCalendar();
+//        Cursor data = myDbHelper.fetchLogDataFromDate(myDb,now.toString());
+//        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+//            String name = data.getString(data.getColumnIndex("name"));
+//            String serving = data.getString(data.getColumnIndex("servingsize"));
+//            String date = data.getString(data.getColumnIndex("date"));
+//
+//
+//            HashMap<String,String> tmp =new HashMap<String, String>();
+//            temp1.put(FIRST_COLUMN, name);
+//            temp1.put(SECOND_COLUMN, serving);
+//            temp1.put(THIRD_COLUMN, date);
+//            list.add(tmp);
+//        }
+//        data.close();
+
         HashMap<String,String> temp=new HashMap<String, String>();
         temp.put(FIRST_COLUMN, "Apple");
         temp.put(SECOND_COLUMN, "2");
@@ -123,7 +155,6 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         temp3.put(FIRST_COLUMN, "Chicken Pot Pie");
         temp3.put(SECOND_COLUMN, "1");
         temp3.put(THIRD_COLUMN, "5:40");
-        list.add(temp3);
 
         list.add(temp);
         list.add(temp2);
@@ -177,7 +208,6 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         });
 
         addListenerOnButton();
-
     }
 
     public void addListenerOnButton() {
@@ -186,15 +216,85 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MetricsActivity.this);
-                builder.setMessage("Servings?")
-                        .setTitle("Voice Search");
-                builder.setPositiveButton("OK", null);
-                builder.setNegativeButton("Cancel", null);
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                promptSpeechInput();
             }
         });
+    }
+
+    /**
+     * Showing google speech input dialog
+     * */
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                "What did you eat?");
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    "Fail",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Receiving speech input
+     * */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    ArrayList<String> result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    Toast.makeText(getApplicationContext(),
+                            result.get(0),
+                            Toast.LENGTH_SHORT).show();
+                    speakOut(result.get(0));
+                }
+                break;
+            }
+
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        // Don't forget to shutdown tts!
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+            int result = tts.setLanguage(Locale.US);
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            } else {
+            }
+
+        } else {
+            Log.e("TTS", "Initilization Failed!");
+        }
+    }
+
+    private void speakOut(String s) {
+        if (tts != null) {
+            tts.speak("Great, adding " + s + " to your list.", TextToSpeech.QUEUE_FLUSH, null, null);
+        }
+//        GregorianCalendar now = new GregorianCalendar();
+//        myDbHelper.insertLogData(myDb,s,now.toString(),now.getTime().toString(),1.0);
     }
 
     @Override
