@@ -41,7 +41,7 @@ public class WatchListenerService extends WearableListenerService {
         //viewIntent.putExtra(EXTRA_EVENT_ID, eventId);
 
         Bitmap bitmap = Bitmap.createBitmap(320,320, Bitmap.Config.ARGB_8888);
-        bitmap.eraseColor(Color.argb(255, 251, 185, 87));//orange
+        bitmap.eraseColor(Color.argb(255, 252, 186, 89));//orange
 
         PendingIntent viewPendingIntent =
                 PendingIntent.getActivity(this, 0, viewIntent, 0);
@@ -63,7 +63,7 @@ public class WatchListenerService extends WearableListenerService {
         if (rand >= .5) {//meal reminder
             notificationBuilder =
                     new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.logo)
+                            .setSmallIcon(R.drawable.logo3)
                             .setContentTitle("Meal Reminder")
                             .setContentText("Eat Lunch")
                             .setContentIntent(viewPendingIntent);
@@ -75,7 +75,7 @@ public class WatchListenerService extends WearableListenerService {
         } else {//nutrient reminder
             notificationBuilder =
                     new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.logo)
+                            .setSmallIcon(R.drawable.logo3)
                             .setContentTitle("Nutrient Reminder")
                             .setContentText(value)
                             .setContentIntent(viewPendingIntent);
