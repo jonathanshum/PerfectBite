@@ -12,4 +12,6 @@
     <string name="dialog_message">Discard Goal?</string>
     <string name="discard">Discard</string>
     <string name="cancel">Cancel</string>
+    <string name="customText">Enter a Target Intake Amount (Daily)</string>
+    <string name="fdaText">The FDA\'s Recommended Daily Intake Is</string>
 </resources>
