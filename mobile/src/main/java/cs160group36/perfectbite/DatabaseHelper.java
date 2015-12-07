@@ -107,7 +107,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public boolean insertData(SQLiteDatabase db, String name, String serving, int cal, int fat, int carb, int sodium, int protein) {
         Cursor c = this.fetchDataFromName(db, name);
-        if (c.getCount() > 0) {
+        if (c.moveToFirst()) {
             return false;
         }
         c.close();
