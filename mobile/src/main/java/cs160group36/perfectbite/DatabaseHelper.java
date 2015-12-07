@@ -94,6 +94,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //Insert default log data into database. Currently empty.
         this.insertDefaultLogData(db);
+
     }
 
     @Override
