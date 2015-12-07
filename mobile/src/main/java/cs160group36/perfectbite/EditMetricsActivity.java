@@ -101,7 +101,7 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         xl.setDrawGridLines(false);
         xl.setGridLineWidth(0.0f);
 
-        setData(6, 50);
+        setData(7, 50,  mDays);
         mChart.animateY(2500);
 
         Legend l = mChart.getLegend();
@@ -202,10 +202,9 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         allTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                setData(6, 50);
+                setData(6, 50,mAllTime);
                 mChart.animateY(2500);
-                Toast.makeText(getApplicationContext(), "All Time!",
-                        Toast.LENGTH_LONG).show();
+
             }
         });
 
@@ -213,10 +212,9 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         weeklyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                setData(4, 50);
+                setData(4, 50, mWeeks);
                 mChart.animateY(2500);
-                Toast.makeText(getApplicationContext(), "Weekly!",
-                        Toast.LENGTH_LONG).show();
+
             }
         });
 
@@ -224,10 +222,8 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         dailyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                setData(6, 50);
+                setData(7, 50, mDays);
                 mChart.animateY(2500);
-                Toast.makeText(getApplicationContext(), "Daily!",
-                        Toast.LENGTH_LONG).show();
             }
         });
 
@@ -351,11 +347,11 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
 
     }
 
-    private void setData(int count, float range) {
+    private void setData(int count, float range, String[] cat) {
         ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
         ArrayList<String> xVals = new ArrayList<String>();
         for (int i = 0; i < count; i++) {
-            xVals.add(mMonths[i % 12]);
+            xVals.add(cat[i % 12]);
             yVals1.add(new BarEntry((float) (Math.random() * range), i));
         }
         BarDataSet set1 = new BarDataSet(yVals1, "DataSet 1");

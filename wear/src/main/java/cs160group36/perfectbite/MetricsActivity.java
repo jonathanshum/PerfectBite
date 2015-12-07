@@ -1,10 +1,12 @@
 package cs160group36.perfectbite;
 
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
@@ -36,8 +38,14 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener,
         OnChartValueSelectedListener {
@@ -47,6 +55,8 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
             Color.parseColor("#6B9FD2"), Color.parseColor("#5C6BC0"), Color.parseColor("#0D47A1"),
             Color.parseColor("#00B8D4"), Color.parseColor("#303F9F"), Color.parseColor("#0091EA")
     };
+    private final int REQ_CODE_SPEECH_INPUT = 100;
+    private GoogleApiClient mApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,15 +99,53 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MetricsActivity.this);
-                builder.setMessage("Servings?")
-                        .setTitle("Voice Search");
-                builder.setPositiveButton("OK", null);
-                builder.setNegativeButton("Cancel", null);
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                promptSpeechInput();
             }
         });
+    }
+
+    /**
+     * Showing google speech input dialog
+     * */
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                "What did you eat?");
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    "Fail",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Receiving speech input
+     * */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    ArrayList<String> result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    Toast.makeText(getApplicationContext(),
+                            result.get(0),
+                            Toast.LENGTH_SHORT).show();
+                    mApiClient.connect();
+                    sendMessage("WatchtoPhone", result.get(0));
+                }
+                break;
+            }
+
+        }
     }
 
     @Override
@@ -231,5 +279,20 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         // TODO Auto-generated method stub
+    }
+
+    private void sendMessage( final String path, final String text ) {
+        Log.d("got here", "something");
+        new Thread( new Runnable() {
+            @Override
+            public void run() {
+                Log.d("SendingMessage", "MessageBeingSent");
+                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+                for(Node node : nodes.getNodes()) {
+                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
+                            mApiClient, node.getId(), path, text.getBytes() ).await();
+                }
+            }
+        }).start();
     }
 }
