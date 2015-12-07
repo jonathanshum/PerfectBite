@@ -7,4 +7,9 @@
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_metrics">MetricsActivity</string>
     <string name="title_activity_edit_metrics">EditMetricsActivity</string>
+    <string name="title_activity_my_goals">myGoalsActivity</string>
+    <string name="title_activity_add_goal">AddGoalActivity</string>
+    <string name="dialog_message">Discard Goal?</string>
+    <string name="discard">Discard</string>
+    <string name="cancel">Cancel</string>
 </resources>

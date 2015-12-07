@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent i = new Intent(v.getContext(), DatabaseActivity.class);
                     startActivity(i);
                 }
-                else if (true) {
+                else if (false) {
                     Intent i = new Intent(v.getContext(), MetricsActivity.class);
                     startActivity(i);
                 } else {
