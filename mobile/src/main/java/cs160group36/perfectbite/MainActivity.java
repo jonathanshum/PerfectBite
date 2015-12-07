@@ -31,7 +31,5 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
-        Intent intent = new Intent(this, RecommendationService.class);
-        startService(intent);
     }
 }

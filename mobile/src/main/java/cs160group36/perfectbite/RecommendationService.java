@@ -3,6 +3,7 @@ package cs160group36.perfectbite;
 import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationManagerCompat;
@@ -56,11 +57,18 @@ public class RecommendationService extends Service {
             }
         }
         Log.d(min.getKey(), "minnutrient");
-        String nutrientNeeded = min.getKey();
+        //String nutrientNeeded = min.getKey();
+        DatabaseHelper datah = new DatabaseHelper(this);
+        Calendar c = Calendar.getInstance();
+        SQLiteDatabase myDb = datah.getWritableDatabase();
+
+        String nutrientNeeded = datah.getLowestProgress(myDb, "2015-12-05");
+        Log.d(nutrientNeeded, "fromdata");
+
 
         if (false) {
-            Calendar c = Calendar.getInstance();
-            int hour = c.get(Calendar.HOUR_OF_DAY);
+            Calendar cal = Calendar.getInstance();
+            int hour = cal.get(Calendar.HOUR_OF_DAY);
             Log.d(Integer.toString(hour), "time");
             if (hour >= 6 && hour <= 10 && !eatenRecently) {
                 mealMessage += "Now is a good time to eat breakfast.";
