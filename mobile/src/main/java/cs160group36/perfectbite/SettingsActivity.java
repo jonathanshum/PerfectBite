@@ -9,8 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -37,14 +37,36 @@ public class SettingsActivity extends AppCompatActivity {
                 new myAdapter(this, android.R.layout.simple_list_item_1);
 
         itemsAdapter.addAll(values);
-        ListView listView = (ListView) findViewById(R.id.listView);
+        final ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(itemsAdapter);
-        ImageView settings = (ImageView) findViewById(R.id.homeView);
-        settings.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent i = new Intent(v.getContext(), MetricsActivity.class);
-                startActivity(i);
-                finish();
+//        ImageView settings = (ImageView) findViewById(R.id.homeView);
+//        settings.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                Intent i = new Intent(v.getContext(), MetricsActivity.class);
+//                startActivity(i);
+//                finish();
+//            }
+//        });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1,
+                                    int position, long arg3) {
+                // TODO Auto-generated method stub
+                int itemPosition = position;
+
+                // ListView Clicked item value
+                String itemValue = (String) listView.getItemAtPosition(position);
+                if (position == 1){
+                    Intent intent = new Intent(getApplicationContext(), myGoalsActivity.class);
+                    startActivity(intent);
+                }
+
+//                // Show Alert
+//                Toast.makeText(getApplicationContext(),
+//                        "Position :" + itemPosition + "  ListItem : " + itemValue, Toast.LENGTH_LONG)
+//                        .show();
             }
         });
         TextView rec = (TextView) findViewById(R.id.recTextView);

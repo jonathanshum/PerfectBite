@@ -18,11 +18,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_ROWID = "_id";
     public static final String KEY_FOODNAME = "name";
     public static final String KEY_SERVING = "servingsize";
-    public static final String KEY_CAL = "calories";
-    public static final String KEY_FAT = "totalfat";
-    public static final String KEY_CARB = "carbohydrates";
-    public static final String KEY_SODIUM = "sodium";
-    public static final String KEY_PROTEIN = "protein";
+    public static final String KEY_CAL = "Calories";
+    public static final String KEY_FAT = "Fat";
+    public static final String KEY_CARB = "Carbohydrates";
+    public static final String KEY_SODIUM = "Sodium";
+    public static final String KEY_PROTEIN = "Protein";
     public static final int DATABASE_VERSION = 1;
 
     //table for data about food consumed; shares some column names with the above table
@@ -263,19 +263,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void insertDefaultGoals(SQLiteDatabase db) {
         ContentValues calValues = new ContentValues();
         calValues.put(KEY_CATEGORY, KEY_CAL);
-        calValues.put(KEY_GOAL, 0);
+        calValues.put(KEY_GOAL, 1);
         calValues.put(KEY_VALUE, 1);
-        calValues.put(KEY_DESCRIPTION, "not initialized");
-        calValues.put(KEY_PROGRESS, "not initialized");
+        calValues.put(KEY_DESCRIPTION, "Consume 1500 - 200 calories per day");
+        calValues.put(KEY_PROGRESS, "You're doing great! You have eaten an average of 1800 calories per day over the last 2 weeks! Proper calorie intake is essential in maintaining a healthy weight");
 
         db.insert(TABLE3_NAME, null, calValues);
+
+
 
         ContentValues fatValues = new ContentValues();
         fatValues.put(KEY_CATEGORY, KEY_FAT);
         fatValues.put(KEY_GOAL, 0);
         fatValues.put(KEY_VALUE, 1);
-        fatValues.put(KEY_DESCRIPTION, "not initialized");
-        fatValues.put(KEY_PROGRESS, "not initialized");
+        fatValues.put(KEY_DESCRIPTION, "Eat less than 70g of Fat per day");
+        fatValues.put(KEY_PROGRESS, "This is a new goal of yours so we don't have much to grade your performance off of.  Keep working hard and eating lean foods!");
 
         db.insert(TABLE3_NAME, null, fatValues);
 
@@ -299,10 +301,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues proteinValues = new ContentValues();
         proteinValues.put(KEY_CATEGORY, KEY_PROTEIN);
-        proteinValues.put(KEY_GOAL, 0);
+        proteinValues.put(KEY_GOAL, 1);
         proteinValues.put(KEY_VALUE, 1);
-        proteinValues.put(KEY_DESCRIPTION, "not initialized");
-        proteinValues.put(KEY_PROGRESS, "not initialized");
+        proteinValues.put(KEY_DESCRIPTION, "Eat 20-30g of Protein per day");
+        proteinValues.put(KEY_PROGRESS, "Historically you meet your goal on 70% of days.  Deficiencies in protein can lead to exhaustion and headaches.");
 
         db.insert(TABLE3_NAME, null, proteinValues);
     }
