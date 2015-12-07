@@ -57,14 +57,13 @@ public class RecommendationService extends Service {
             }
         }
         Log.d(min.getKey(), "minnutrient");
-        //String nutrientNeeded = min.getKey();
         DatabaseHelper datah = new DatabaseHelper(this);
         Calendar c = Calendar.getInstance();
+        String date = c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH);//assuming date format is YYYY-MM-DD
         SQLiteDatabase myDb = datah.getWritableDatabase();
-
-        String nutrientNeeded = datah.getLowestProgress(myDb, "2015-12-05");
+        Log.d(date, "date");
+        String nutrientNeeded = datah.getLowestProgress(myDb, date);
         Log.d(nutrientNeeded, "fromdata");
-
 
         if (false) {
             Calendar cal = Calendar.getInstance();
