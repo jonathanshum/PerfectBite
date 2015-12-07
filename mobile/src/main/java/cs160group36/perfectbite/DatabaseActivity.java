@@ -51,13 +51,14 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                 }
                 else {
                     Cursor c = myDbHelper.fetchDataFromName(myDb, editName.getText().toString());
-                    if (c.getCount() == 0) {
+                    if (!c.moveToFirst()) {
                         results.setText("No such entry found.");
                     }
                     else {
                         String s = dumpCursorToString(c);
                         results.setText(s);
                     }
+                    c.close();
                 }
                 break;
             case R.id.button:
