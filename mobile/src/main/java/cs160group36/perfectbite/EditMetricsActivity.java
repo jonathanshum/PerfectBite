@@ -2,6 +2,8 @@ package cs160group36.perfectbite;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -59,6 +61,7 @@ import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeListener,
@@ -79,11 +82,16 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
     public static final String FIRST_COLUMN="First";
     public static final String SECOND_COLUMN="Second";
     public static final String THIRD_COLUMN="Third";
+    DatabaseHelper myDbHelper;
+    SQLiteDatabase myDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_metrics_detailed);
+
+        myDbHelper = new DatabaseHelper(this);
+        myDb = myDbHelper.getWritableDatabase();
 
         mChart = (BarChart) findViewById(R.id.chart1);
         mChart.setOnChartValueSelectedListener(this);
@@ -112,60 +120,6 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         mChart.getLegend().setEnabled(false);
         mChart.getAxisLeft().setEnabled(false);
         mChart.getAxisRight().setEnabled(false);
-
-        ListView listView = (ListView) findViewById(R.id.listView);
-        list = new ArrayList<HashMap<String,String>>();
-
-        HashMap<String,String> temp1=new HashMap<String, String>();
-        temp1.put(FIRST_COLUMN, "Recent Bites");
-        temp1.put(SECOND_COLUMN, "Servings");
-        temp1.put(THIRD_COLUMN, "Time");
-        list.add(temp1);
-
-        HashMap<String,String> temp=new HashMap<String, String>();
-        temp.put(FIRST_COLUMN, "Apple");
-        temp.put(SECOND_COLUMN, "2");
-        temp.put(THIRD_COLUMN, "10:20");
-        list.add(temp);
-
-        HashMap<String,String> temp2=new HashMap<String, String>();
-        temp2.put(FIRST_COLUMN, "Watermelon");
-        temp2.put(SECOND_COLUMN, "10");
-        temp2.put(THIRD_COLUMN, "12:01");
-        list.add(temp2);
-
-        HashMap<String,String> temp3=new HashMap<String, String>();
-        temp3.put(FIRST_COLUMN, "Chicken Pot Pie");
-        temp3.put(SECOND_COLUMN, "1");
-        temp3.put(THIRD_COLUMN, "5:40");
-        list.add(temp3);
-
-        list.add(temp);
-        list.add(temp2);
-        list.add(temp3);
-
-        CustomAdapter adapter = new CustomAdapter(this, list);
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-                int pos = position + 1;
-                Toast.makeText(EditMetricsActivity.this, Integer.toString(pos) + " Clicked", Toast.LENGTH_SHORT).show();
-            }
-
-        });
-
-        listView.setOnTouchListener(new View.OnTouchListener() {
-            // Setting on Touch Listener for handling the touch inside ScrollView
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                // Disallow the touch request for parent scroll on touch of child view
-                v.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });
-        setListViewHeightBasedOnChildren(listView);
 
         scrollView = (ScrollView) findViewById(R.id.scrollView);
         scrollView.postDelayed(new Runnable() {
@@ -202,7 +156,7 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         allTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                setData(6, 50,mAllTime);
+                setData(5, 50, mAllTime);
                 mChart.animateY(2500);
 
             }
@@ -212,7 +166,7 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         weeklyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                setData(4, 50, mWeeks);
+                setData(7, 50, mDays);
                 mChart.animateY(2500);
 
             }
@@ -222,7 +176,7 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         dailyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                setData(7, 50, mDays);
+                setData(6, 50, mWeeks);
                 mChart.animateY(2500);
             }
         });
@@ -230,15 +184,91 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         ImageView addFood = (ImageView) findViewById(R.id.addFood);
         addFood.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-//                Intent i = new Intent(v.getContext(), SettingsActivity.class);
-//                startActivity(i);
                 Toast.makeText(getApplicationContext(), "Add Food!",
                         Toast.LENGTH_LONG).show();
             }
         });
 
-
+        updateListView();
     }
+
+    public void updateListView(){
+        ListView listView = (ListView) findViewById(R.id.listView);
+        list = new ArrayList<HashMap<String,String>>();
+
+        HashMap<String,String> temp1 = new HashMap<String, String>();
+        temp1.put(FIRST_COLUMN, "Recent Bites");
+        temp1.put(SECOND_COLUMN, "Servings");
+        temp1.put(THIRD_COLUMN, "Time");
+        list.add(temp1);
+
+        Calendar cal = Calendar.getInstance();
+        cal.clear(Calendar.HOUR_OF_DAY);
+        cal.clear(Calendar.AM_PM);
+        cal.clear(Calendar.MINUTE);
+        cal.clear(Calendar.SECOND);
+        cal.clear(Calendar.MILLISECOND);
+
+        Cursor data = myDbHelper.fetchLogDataFromDate(myDb,cal.toString());
+        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+            String name = data.getString(data.getColumnIndex("name"));
+            String serving = data.getString(data.getColumnIndex("Calories"));
+            String date = data.getString(data.getColumnIndex("time"));
+            HashMap<String,String> tmp =new HashMap<String, String>();
+            tmp.put(FIRST_COLUMN, name);
+            tmp.put(SECOND_COLUMN, serving);
+            tmp.put(THIRD_COLUMN, date);
+            if (tmp != null) {
+                list.add(tmp);
+            }
+        }
+        data.close();
+
+        HashMap<String,String> temp=new HashMap<String, String>();
+        temp.put(FIRST_COLUMN, "Apple");
+        temp.put(SECOND_COLUMN, "2");
+        temp.put(THIRD_COLUMN, "10:20");
+        list.add(temp);
+
+        HashMap<String,String> temp2=new HashMap<String, String>();
+        temp2.put(FIRST_COLUMN, "Watermelon");
+        temp2.put(SECOND_COLUMN, "10");
+        temp2.put(THIRD_COLUMN, "12:01");
+        list.add(temp2);
+
+        HashMap<String,String> temp3=new HashMap<String, String>();
+        temp3.put(FIRST_COLUMN, "Chicken Pot Pie");
+        temp3.put(SECOND_COLUMN, "1");
+        temp3.put(THIRD_COLUMN, "5:40");
+
+        list.add(temp);
+        list.add(temp2);
+        list.add(temp3);
+
+        CustomAdapter adapter = new CustomAdapter(this, list);
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+                int pos = position + 1;
+                Toast.makeText(EditMetricsActivity.this, Integer.toString(pos) + " Clicked", Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
+        listView.setOnTouchListener(new View.OnTouchListener() {
+            // Setting on Touch Listener for handling the touch inside ScrollView
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Disallow the touch request for parent scroll on touch of child view
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+        setListViewHeightBasedOnChildren(listView);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

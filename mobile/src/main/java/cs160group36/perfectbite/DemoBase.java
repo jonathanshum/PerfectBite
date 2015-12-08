@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentActivity;
 public abstract class DemoBase extends FragmentActivity {
 
     protected String[] mWeeks = new String[] {
-            "12-4", "4-8", "12-4", "4-8", "8-12"
+            "12-4", "4-8", "8-12", "12-4", "4-8", "8-12"
     };
 
     protected String[] mDays = new String[] {
@@ -16,7 +16,7 @@ public abstract class DemoBase extends FragmentActivity {
     };
 
     protected String[] mAllTime = new String[] {
-            "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"
+           "Aug", "Sept", "Oct", "Nov", "Dec"
     };
 
     protected String[] mParties = new String[] {

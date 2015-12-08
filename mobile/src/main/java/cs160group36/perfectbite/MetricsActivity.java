@@ -54,8 +54,11 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -76,8 +79,8 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
     public static final String THIRD_COLUMN="Third";
     private final int REQ_CODE_SPEECH_INPUT = 100;
     private TextToSpeech tts;
-//    DatabaseHelper myDbHelper;
-//    SQLiteDatabase myDb;
+    DatabaseHelper myDbHelper;
+    SQLiteDatabase myDb;
 
 
     @Override
@@ -85,8 +88,8 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_metrics);
 
-//        myDbHelper = new DatabaseHelper(this);
-//        myDb = myDbHelper.getWritableDatabase();
+        myDbHelper = new DatabaseHelper(this);
+        myDb = myDbHelper.getWritableDatabase();
 
         mChart = (PieChart) findViewById(R.id.chart1);
         mChart.setUsePercentValues(true);
@@ -114,30 +117,66 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         Legend l = mChart.getLegend();
         mChart.getLegend().setEnabled(false);
 
+        updateListView();
+
+        scrollView = (ScrollView) findViewById(R.id.scrollView);
+        scrollView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.fullScroll(ScrollView.FOCUS_UP);
+            }
+        }, 5);
+
+        ImageView settings = (ImageView) findViewById(R.id.settingsView);
+        settings.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), SettingsActivity.class);
+                startActivity(i);
+            }
+        });
+
+        ImageView addFood = (ImageView) findViewById(R.id.addFood);
+        addFood.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), DatabaseActivity.class);
+                startActivity(i);
+            }
+        });
+
+        addListenerOnButton();
+    }
+
+    public void updateListView() {
         ListView listView = (ListView) findViewById(R.id.listView);
         list = new ArrayList<HashMap<String,String>>();
 
-        HashMap<String,String> temp1=new HashMap<String, String>();
+        HashMap<String,String> temp1 = new HashMap<String, String>();
         temp1.put(FIRST_COLUMN, "Recent Bites");
         temp1.put(SECOND_COLUMN, "Servings");
         temp1.put(THIRD_COLUMN, "Time");
         list.add(temp1);
 
-//        GregorianCalendar now = new GregorianCalendar();
-//        Cursor data = myDbHelper.fetchLogDataFromDate(myDb,now.toString());
-//        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
-//            String name = data.getString(data.getColumnIndex("name"));
-//            String serving = data.getString(data.getColumnIndex("servingsize"));
-//            String date = data.getString(data.getColumnIndex("date"));
-//
-//
-//            HashMap<String,String> tmp =new HashMap<String, String>();
-//            temp1.put(FIRST_COLUMN, name);
-//            temp1.put(SECOND_COLUMN, serving);
-//            temp1.put(THIRD_COLUMN, date);
-//            list.add(tmp);
-//        }
-//        data.close();
+        Calendar cal = Calendar.getInstance();
+        cal.clear(Calendar.HOUR_OF_DAY);
+        cal.clear(Calendar.AM_PM);
+        cal.clear(Calendar.MINUTE);
+        cal.clear(Calendar.SECOND);
+        cal.clear(Calendar.MILLISECOND);
+
+        Cursor data = myDbHelper.fetchLogDataFromDate(myDb,cal.toString());
+        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+            String name = data.getString(data.getColumnIndex("name"));
+            String serving = data.getString(data.getColumnIndex("Calories"));
+            String date = data.getString(data.getColumnIndex("time"));
+            HashMap<String,String> tmp =new HashMap<String, String>();
+            tmp.put(FIRST_COLUMN, name);
+            tmp.put(SECOND_COLUMN, serving);
+            tmp.put(THIRD_COLUMN, date);
+            if (tmp != null) {
+                list.add(tmp);
+            }
+        }
+        data.close();
 
         HashMap<String,String> temp=new HashMap<String, String>();
         temp.put(FIRST_COLUMN, "Apple");
@@ -182,32 +221,6 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
             }
         });
         setListViewHeightBasedOnChildren(listView);
-
-        scrollView = (ScrollView) findViewById(R.id.scrollView);
-        scrollView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                scrollView.fullScroll(ScrollView.FOCUS_UP);
-            }
-        }, 5);
-
-        ImageView settings = (ImageView) findViewById(R.id.settingsView);
-        settings.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent i = new Intent(v.getContext(), SettingsActivity.class);
-                startActivity(i);
-            }
-        });
-
-        ImageView addFood = (ImageView) findViewById(R.id.addFood);
-        addFood.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Add Food!",
-                        Toast.LENGTH_LONG).show();
-            }
-        });
-
-        addListenerOnButton();
     }
 
     public void addListenerOnButton() {
@@ -293,8 +306,14 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         if (tts != null) {
             tts.speak("Great, adding " + s + " to your list.", TextToSpeech.QUEUE_FLUSH, null, null);
         }
-//        GregorianCalendar now = new GregorianCalendar();
-//        myDbHelper.insertLogData(myDb,s,now.toString(),now.getTime().toString(),1.0);
+        Calendar cal = Calendar.getInstance();
+        cal.clear(Calendar.HOUR_OF_DAY);
+        cal.clear(Calendar.AM_PM);
+        cal.clear(Calendar.MINUTE);
+        cal.clear(Calendar.SECOND);
+        cal.clear(Calendar.MILLISECOND);
+        myDbHelper.insertLogData(myDb,s,cal.toString(),"99:99",1.0);
+        updateListView();
     }
 
     @Override

@@ -21,6 +21,7 @@ public class ListenerService extends WearableListenerService {
 
     @Override
     public void onCreate(){
+        super.onCreate();
         myDbHelper = new DatabaseHelper(this);
         myDb = myDbHelper.getWritableDatabase();
     }
@@ -28,8 +29,6 @@ public class ListenerService extends WearableListenerService {
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-//            Intent intent = new Intent(this, InstaService.class);
-//            startService(intent);
         Log.d("getting here", "Starting Activity");
         String path = messageEvent.getPath();
         if (path.equalsIgnoreCase("WatchtoPhone")){
