@@ -261,25 +261,6 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         }
         data.close();
 
-        HashMap<String,String> temp=new HashMap<String, String>();
-        temp.put(FIRST_COLUMN, "Apple");
-        temp.put(SECOND_COLUMN, "2");
-        temp.put(THIRD_COLUMN, "10:20");
-
-        HashMap<String,String> temp2=new HashMap<String, String>();
-        temp2.put(FIRST_COLUMN, "Watermelon");
-        temp2.put(SECOND_COLUMN, "10");
-        temp2.put(THIRD_COLUMN, "12:01");
-
-        HashMap<String,String> temp3=new HashMap<String, String>();
-        temp3.put(FIRST_COLUMN, "Chicken Pot Pie");
-        temp3.put(SECOND_COLUMN, "1");
-        temp3.put(THIRD_COLUMN, "5:40");
-
-        list.add(temp);
-        list.add(temp2);
-        list.add(temp3);
-
         CustomAdapter adapter = new CustomAdapter(this, list);
         listView.setAdapter(adapter);
 
