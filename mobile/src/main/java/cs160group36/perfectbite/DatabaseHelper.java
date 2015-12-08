@@ -306,13 +306,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor logData = this.fetchLogDataFromDate(db, date);
         Cursor goals = this.fetchGoals(db);
         Map<String, Double> progress = new HashMap<String, Double>();
+        for (goals.moveToFirst(); !goals.isAfterLast(); goals.moveToNext()) {
+            String category = goals.getString(goals.getColumnIndex(KEY_CATEGORY));
+            progress.put(category, 0.0);
+        }
         for (logData.moveToFirst(); !logData.isAfterLast(); logData.moveToNext()) {
             for (goals.moveToFirst(); !goals.isAfterLast(); goals.moveToNext()) {
                 String category = goals.getString(goals.getColumnIndex(KEY_CATEGORY));
                 int value = logData.getInt(logData.getColumnIndex(category));
                 int goalValue = goals.getInt(goals.getColumnIndex(KEY_VALUE));
                 double fractionOfGoal = value / (double)goalValue; //cast to double for floating point calculation
-                progress.put(category, fractionOfGoal);
+                progress.put(category, progress.get(category) + fractionOfGoal);
             }
         }
         logData.close();
