@@ -91,6 +91,22 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         mChart.getLegend().setEnabled(false);
 
         addListenerOnButton();
+
+
+        mApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(Bundle connectionHint) {
+                        /* Successfully connected */
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int cause) {
+                        /* Connection was interrupted */
+                    }
+                })
+                .build();
     }
 
     public void addListenerOnButton() {
