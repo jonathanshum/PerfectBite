@@ -333,7 +333,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         double min = 1.0;
         String lowest = "all goals passed";
         for (Map.Entry<String, Double> entry : progress.entrySet()) {
-            if (entry.getValue() < min) {
+            if (entry.getValue() <= min) {
                 min = entry.getValue();
                 lowest = entry.getKey();
             }
