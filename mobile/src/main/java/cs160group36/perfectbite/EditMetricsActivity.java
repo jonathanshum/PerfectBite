@@ -60,6 +60,8 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -85,6 +87,8 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
     DatabaseHelper myDbHelper;
     SQLiteDatabase myDb;
 
+    String message;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +96,27 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
 
         myDbHelper = new DatabaseHelper(this);
         myDb = myDbHelper.getWritableDatabase();
+
+        Bundle bundle = getIntent().getExtras();
+        message = bundle.getString("category");
+
+//        Cursor goals = myDbHelper.fetchGoals(myDb);
+//        ArrayList<String> titles = new ArrayList<String>();
+//        ArrayList<String> values = new ArrayList<String>();
+//
+//        for (goals.moveToFirst(); !goals.isAfterLast(); goals.moveToNext()){
+//            String title = goals.getString(goals.getColumnIndex("category"));
+//            String value = goals.getString(goals.getColumnIndex("value"));
+//            titles.add(title);
+//            values.add(value);
+//        }
+//
+//        goals.close();
+//        String val = values.get(titles.indexOf(message));
+//
+//        String goal = message + ": " + val;
+        TextView txt = (TextView) findViewById(R.id.textView);
+        txt.setText(message);
 
         mChart = (BarChart) findViewById(R.id.chart1);
         mChart.setOnChartValueSelectedListener(this);
@@ -109,7 +134,7 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         xl.setDrawGridLines(false);
         xl.setGridLineWidth(0.0f);
 
-        setData(7, 50,  mDays);
+        setData(7, 100, mDays);
         mChart.animateY(2500);
 
         Legend l = mChart.getLegend();
@@ -132,7 +157,7 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         ImageView settings = (ImageView) findViewById(R.id.settingsView);
         settings.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent i = new Intent(v.getContext(), SettingsActivity.class);
+                Intent i = new Intent(v.getContext(), myGoalsActivity.class);
                 startActivity(i);
             }
         });
@@ -152,40 +177,49 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
                 })
                 .build();
 
-        Button allTimeButton = (Button) findViewById(R.id.AllTimeButton);
+        final Button allTimeButton = (Button) findViewById(R.id.AllTimeButton);
+        final Button weeklyButton = (Button) findViewById(R.id.WeeklyButton);
+        final Button dailyButton = (Button) findViewById(R.id.DailyButton);
+
         allTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                setData(5, 50, mAllTime);
+                setData(5, 100, mAllTime);
                 mChart.animateY(2500);
-
+                allTimeButton.setBackgroundColor(Color.parseColor("#01579B"));
+                weeklyButton.setBackgroundColor(Color.parseColor("#6B9FD2"));
+                dailyButton.setBackgroundColor(Color.parseColor("#6B9FD2"));
             }
         });
 
-        Button weeklyButton = (Button) findViewById(R.id.WeeklyButton);
         weeklyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                setData(7, 50, mDays);
+                setData(7, 100, mDays);
                 mChart.animateY(2500);
+                allTimeButton.setBackgroundColor(Color.parseColor("#6B9FD2"));
+                weeklyButton.setBackgroundColor(Color.parseColor("#01579B"));
+                dailyButton.setBackgroundColor(Color.parseColor("#6B9FD2"));
 
             }
         });
 
-        Button dailyButton = (Button) findViewById(R.id.DailyButton);
         dailyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                setData(6, 50, mWeeks);
+                setData(6, 100, mWeeks);
                 mChart.animateY(2500);
+                allTimeButton.setBackgroundColor(Color.parseColor("#6B9FD2"));
+                weeklyButton.setBackgroundColor(Color.parseColor("#6B9FD2"));
+                dailyButton.setBackgroundColor(Color.parseColor("#01579B"));
             }
         });
 
         ImageView addFood = (ImageView) findViewById(R.id.addFood);
         addFood.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Add Food!",
-                        Toast.LENGTH_LONG).show();
+                Intent i = new Intent(v.getContext(), DatabaseActivity.class);
+                startActivity(i);
             }
         });
 
@@ -198,7 +232,7 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
 
         HashMap<String,String> temp1 = new HashMap<String, String>();
         temp1.put(FIRST_COLUMN, "Recent Bites");
-        temp1.put(SECOND_COLUMN, "Servings");
+        temp1.put(SECOND_COLUMN, message);
         temp1.put(THIRD_COLUMN, "Time");
         list.add(temp1);
 
@@ -209,15 +243,18 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         cal.clear(Calendar.SECOND);
         cal.clear(Calendar.MILLISECOND);
 
-        Cursor data = myDbHelper.fetchLogDataFromDate(myDb,cal.toString());
-        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+        Calendar c = Calendar.getInstance();
+        String date = c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH);
+
+        Cursor data = myDbHelper.fetchLogDataFromDate(myDb,date);
+        for (data.moveToLast(); !data.isBeforeFirst(); data.moveToPrevious())  {
             String name = data.getString(data.getColumnIndex("name"));
             String serving = data.getString(data.getColumnIndex("Calories"));
-            String date = data.getString(data.getColumnIndex("time"));
-            HashMap<String,String> tmp =new HashMap<String, String>();
+            String time = data.getString(data.getColumnIndex("time"));
+            HashMap<String,String> tmp = new HashMap<String, String>();
             tmp.put(FIRST_COLUMN, name);
-            tmp.put(SECOND_COLUMN, serving);
-            tmp.put(THIRD_COLUMN, date);
+            tmp.put(SECOND_COLUMN, Integer.toString((int) Math.round(Math.random()*50.0)));
+            tmp.put(THIRD_COLUMN, time);
             if (tmp != null) {
                 list.add(tmp);
             }
@@ -228,13 +265,11 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         temp.put(FIRST_COLUMN, "Apple");
         temp.put(SECOND_COLUMN, "2");
         temp.put(THIRD_COLUMN, "10:20");
-        list.add(temp);
 
         HashMap<String,String> temp2=new HashMap<String, String>();
         temp2.put(FIRST_COLUMN, "Watermelon");
         temp2.put(SECOND_COLUMN, "10");
         temp2.put(THIRD_COLUMN, "12:01");
-        list.add(temp2);
 
         HashMap<String,String> temp3=new HashMap<String, String>();
         temp3.put(FIRST_COLUMN, "Chicken Pot Pie");

@@ -9,6 +9,7 @@ import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 /**
@@ -26,7 +27,6 @@ public class ListenerService extends WearableListenerService {
         myDb = myDbHelper.getWritableDatabase();
     }
 
-
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         Log.d("getting here", "Starting Activity");
@@ -39,18 +39,17 @@ public class ListenerService extends WearableListenerService {
             } catch (UnsupportedEncodingException e) {
                 food = "";
             }
-            GregorianCalendar now = new GregorianCalendar();
-            myDbHelper.insertLogData(myDb,food,now.toString(),now.getTime().toString(),1.0);
 
-            Toast.makeText(getApplicationContext(), "Metric Data Updated", Toast.LENGTH_SHORT).show();
+            Calendar c = Calendar.getInstance();
+            String date = c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH);
+            String time = Integer.toString(c.get(Calendar.HOUR_OF_DAY))+ ":" + Integer.toString(c.get(Calendar.MINUTE));
+            myDbHelper.insertLogData(myDb,food,date,time,1.0);
+
+//            Toast.makeText(getApplicationContext(), "Metric Data Updated", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, MetricsActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
-
-
-
-
 
     }
 

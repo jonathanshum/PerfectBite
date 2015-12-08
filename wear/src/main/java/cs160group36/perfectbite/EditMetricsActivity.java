@@ -89,7 +89,7 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         xl.setDrawGridLines(false);
         xl.setGridLineWidth(0.0f);
 
-        setData(3, 50);
+        setData(3, 100);
         mChart.animateY(2500);
 
         Legend l = mChart.getLegend();

@@ -127,10 +127,18 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
             }
         }, 5);
 
+        TextView header = (TextView) findViewById(R.id.textView);
+        header.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sendRec();
+                Toast.makeText(MetricsActivity.this, "Recommendation Service Activated", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         ImageView settings = (ImageView) findViewById(R.id.settingsView);
         settings.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent i = new Intent(v.getContext(), SettingsActivity.class);
+                Intent i = new Intent(v.getContext(), myGoalsActivity.class);
                 startActivity(i);
             }
         });
@@ -156,22 +164,18 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         temp1.put(THIRD_COLUMN, "Time");
         list.add(temp1);
 
-        Calendar cal = Calendar.getInstance();
-        cal.clear(Calendar.HOUR_OF_DAY);
-        cal.clear(Calendar.AM_PM);
-        cal.clear(Calendar.MINUTE);
-        cal.clear(Calendar.SECOND);
-        cal.clear(Calendar.MILLISECOND);
+        Calendar c = Calendar.getInstance();
+        String date = c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH);
 
-        Cursor data = myDbHelper.fetchLogDataFromDate(myDb,cal.toString());
-        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+        Cursor data = myDbHelper.fetchLogDataFromDate(myDb,date);
+        for (data.moveToLast(); !data.isBeforeFirst(); data.moveToPrevious()) {
             String name = data.getString(data.getColumnIndex("name"));
             String serving = data.getString(data.getColumnIndex("Calories"));
-            String date = data.getString(data.getColumnIndex("time"));
+            String time = data.getString(data.getColumnIndex("time"));
             HashMap<String,String> tmp =new HashMap<String, String>();
             tmp.put(FIRST_COLUMN, name);
             tmp.put(SECOND_COLUMN, serving);
-            tmp.put(THIRD_COLUMN, date);
+            tmp.put(THIRD_COLUMN, time);
             if (tmp != null) {
                 list.add(tmp);
             }
@@ -181,18 +185,16 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         HashMap<String,String> temp=new HashMap<String, String>();
         temp.put(FIRST_COLUMN, "Apple");
         temp.put(SECOND_COLUMN, "2");
-        temp.put(THIRD_COLUMN, "10:20");
-        list.add(temp);
+        temp.put(THIRD_COLUMN, "1:20");
 
         HashMap<String,String> temp2=new HashMap<String, String>();
         temp2.put(FIRST_COLUMN, "Watermelon");
-        temp2.put(SECOND_COLUMN, "10");
-        temp2.put(THIRD_COLUMN, "12:01");
-        list.add(temp2);
+        temp2.put(SECOND_COLUMN, "3");
+        temp2.put(THIRD_COLUMN, "2:01");
 
         HashMap<String,String> temp3=new HashMap<String, String>();
         temp3.put(FIRST_COLUMN, "Chicken Pot Pie");
-        temp3.put(SECOND_COLUMN, "1");
+        temp3.put(SECOND_COLUMN, "5");
         temp3.put(THIRD_COLUMN, "5:40");
 
         list.add(temp);
@@ -206,7 +208,7 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
                 int pos = position + 1;
-                Toast.makeText(MetricsActivity.this, Integer.toString(pos) + " Clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MetricsActivity.this, Integer.toString(pos) + " Clicked", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -295,8 +297,8 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "This Language is not supported");
             } else {
-            }
 
+            }
         } else {
             Log.e("TTS", "Initilization Failed!");
         }
@@ -306,13 +308,10 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         if (tts != null) {
             tts.speak("Great, adding " + s + " to your list.", TextToSpeech.QUEUE_FLUSH, null, null);
         }
-        Calendar cal = Calendar.getInstance();
-        cal.clear(Calendar.HOUR_OF_DAY);
-        cal.clear(Calendar.AM_PM);
-        cal.clear(Calendar.MINUTE);
-        cal.clear(Calendar.SECOND);
-        cal.clear(Calendar.MILLISECOND);
-        myDbHelper.insertLogData(myDb,s,cal.toString(),"99:99",1.0);
+        Calendar c = Calendar.getInstance();
+        String date = c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH);
+        String time = Integer.toString(c.get(Calendar.HOUR_OF_DAY))+ ":" + Integer.toString(c.get(Calendar.MINUTE));
+        myDbHelper.insertLogData(myDb,s,date,time,1.0);
         updateListView();
     }
 
@@ -431,6 +430,7 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
                 "Value: " + e.getVal() + ", xIndex: " + e.getXIndex()
                         + ", DataSet index: " + dataSetIndex);
         Intent i = new Intent(this, EditMetricsActivity.class);
+        i.putExtra("category", mParties[e.getXIndex()]);
         startActivity(i);
     }
 
@@ -471,6 +471,12 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
+    }
+
+    public void sendRec() {
+        Intent intent = new Intent(this, RecommendationService.class);
+        startService(intent);
+        Log.d("did it", "clicked");
     }
 }
 

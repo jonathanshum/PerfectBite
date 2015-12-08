@@ -22,15 +22,12 @@ public class GoalPageAdapter extends FragmentPagerAdapter {
     SQLiteDatabase myDb;
     String category;
 
-
-
     public static final String TABLE3_NAME = "usergoals";
     public static final String KEY_CATEGORY = "category";
     public static final String KEY_GOAL = "isgoal";
     public static final String KEY_VALUE = "value";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_PROGRESS = "progressmessage";
-
 
     public GoalPageAdapter(FragmentManager fm, Context context) {
         super(fm);

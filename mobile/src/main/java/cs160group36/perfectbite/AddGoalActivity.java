@@ -200,7 +200,6 @@ public class AddGoalActivity extends AppCompatActivity {
 //            public void onNothingSelected(AdapterView<?> parent) {
 //
 //            }
-//
 //        });
 
 
@@ -234,7 +233,7 @@ public class AddGoalActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getApplicationContext(), "Goal Discarded!",
                                 Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), MetricsActivity.class);
                         startActivity(intent);
                     }
                 });

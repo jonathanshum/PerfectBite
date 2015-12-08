@@ -98,7 +98,7 @@ public class goalFragment extends Fragment {
         ImageView back = (ImageView) view.findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent i = new Intent(v.getContext(), SettingsActivity.class);
+                Intent i = new Intent(v.getContext(), MetricsActivity.class);
                 startActivity(i);
             }
         });
