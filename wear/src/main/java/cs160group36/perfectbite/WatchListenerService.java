@@ -53,16 +53,16 @@ public class WatchListenerService extends WearableListenerService {
         String toeat = "";
         Log.d(value, "value");
 
-        if (value.equals("You are low on calories.")) {
+        if (value.equals("You are low on Calories.")) {
             toeat += "Smart Alec's is nearby.\nThe avocado burger is popular. ";//
-        } else if (value.equals("You are low on totalfat.")) {
-            value = "You are low on fat.";
+        } else if (value.equals("You are low on Fat.")) {
+            value = "You are low on Fat.";
             toeat += "Dot Island Grill is nearby.\nEat some salmon for healthy fats!";
-        } else if (value.equals("You are low on carbohydrates.")) {
+        } else if (value.equals("You are low on Carbohydrates.")) {
             toeat += "Gypsy's is nearby.\nTheir Crazy Alfredo pasta is popular.";
-        } else if (value.equals("You are low on protein.")) {
+        } else if (value.equals("You are low on Protein.")) {
             toeat += "Bongo Burger is nearby. \nTry their black bean burger!";
-        } else if (value.equals("You are low on sodium.")) {
+        } else if (value.equals("You are low on Sodium.")) {
             toeat += "Try the Chicken Tortilla Soup from SF Soup Company.";
         } else if (value.equals("You are low on all goals passed.")) {
             value = "You have met your goals today.";
