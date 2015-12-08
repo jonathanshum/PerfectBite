@@ -41,7 +41,8 @@ public class WatchListenerService extends WearableListenerService {
         //viewIntent.putExtra(EXTRA_EVENT_ID, eventId);
 
         Bitmap bitmap = Bitmap.createBitmap(320,320, Bitmap.Config.ARGB_8888);
-        bitmap.eraseColor(Color.argb(255, 252, 186, 89));//orange
+        //bitmap.eraseColor(Color.argb(255, 252, 186, 89));//orange
+        bitmap.eraseColor(Color.argb(255, 122, 177, 224));//blue
 
         PendingIntent viewPendingIntent =
                 PendingIntent.getActivity(this, 0, viewIntent, 0);
