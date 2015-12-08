@@ -41,7 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_CREATE =
             " create table  " +  TABLE_NAME  + " ("
                     + KEY_ROWID + " integer primary key autoincrement,  "
-                    + KEY_FOODNAME + " text, "
+                    + KEY_FOODNAME + " text collate nocase, "
                     + KEY_SERVING + " text, "
                     + KEY_CAL + " integer, "
                     + KEY_FAT + " integer, "
@@ -52,7 +52,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE2_CREATE =
             " create table  " +  TABLE2_NAME  + " ("
                     + KEY_ROWID + " integer primary key autoincrement,  "
-                    + KEY_FOODNAME + " text, "
+                    + KEY_FOODNAME + " text collate nocase, "
                     + KEY_DATE + " text, "
                     + KEY_TIME + " text, "
                     + KEY_CAL + " integer, "
@@ -82,11 +82,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(DATABASE3_CREATE);
 
         //Insert default data into database. Currently inserts example values to demonstrate functionality.
-        this.insertData(db, "example food 1", "1 cup", 100, 50, 20, 15, 50);
+        this.insertDefaultData(db);
+        /*this.insertData(db, "example food 1", "1 cup", 100, 50, 20, 15, 50);
         this.insertData(db, "example food 2", "1 cup", 200, 100, 40, 30, 100);
         this.insertData(db, "example food 3", "3 cookies", 200, 60, 100, 10, 0);
         this.insertData(db, "example food 4", "1/4 cup", 50, 0, 20, 0, 0);
-        this.insertData(db, "example food 5", "1 tsp", 80, 0, 35, 0, 5);
+        this.insertData(db, "example food 5", "1 tsp", 80, 0, 35, 0, 5);*/
 
         //Insert default goals into database.
         //cal 2000, protein 50, fat 45?
@@ -101,6 +102,84 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
+    }
+
+    public void insertDefaultData(SQLiteDatabase db) {
+        this.insertData(db, "Lemon Greek Yogurt","1 container",100,0,14,80,10);
+        this.insertData(db, "Strawberry Lowfat Yogurt","1 cup",240,2,45,130,10);
+        this.insertData(db, "Shredded Mozzarella Cheese","1 oz",80,6,0,190,7);
+        this.insertData(db, "Bean & Cheese Burrito","1 burrito",440,14,68,990,17);
+        this.insertData(db, "Red Wine Vinegar","1 tbsp",0,0,0,0,0);
+        this.insertData(db, "Strawberry Smoothie","1 packet",100,1,7,170,15);
+        this.insertData(db, "Fat Free Skim Milk","1 cup",90,0,13,130,9);
+        this.insertData(db, "Balsamic Vinaigrette","2 tbsp",100,10,2,370,0);
+        this.insertData(db, "European Baguette","3.5 inch slice",180,0,38,450,6);
+        this.insertData(db, "Butter Cookies","2 cookies",140,7,18,100,1);
+        this.insertData(db, "White Enriched Bread","33 g",90,1,17,190,3);
+        this.insertData(db, "Chocolate Ice Cream","0.5 cup",260,16,27,70,5);
+        this.insertData(db, "Shredded Cheddar Cheese","0.25 cup",110,9,2,180,7);
+        this.insertData(db, "Tomatoes","0.5 cup",25,0,5,220,1);
+        this.insertData(db, "Bologna","1 slice",150,13,5,470,4);
+        this.insertData(db, "Cheddar Cheese Baked Potatoes","1 piece",190,7,27,300,4);
+        this.insertData(db, "100% Apple Juice","8 fl oz",110,0,28,20,0);
+        this.insertData(db, "Fat Free Milk","1 cup",90,0,13,135,9);
+        this.insertData(db, "Wild Alaska Sockeye Salmon","0.25 cup",110,7,0,270,13);
+        this.insertData(db, "Extra Virgin Olive Oil","1 tbsp",120,14,0,0,0);
+        this.insertData(db, "Garbanzo Beans","0.5 cup",120,2,21,135,7);
+        this.insertData(db, "Whole Grain Waffles","2 waffles",140,2,27,390,5);
+        this.insertData(db, "Mini Bagels","1 bagel",120,1,24,210,4);
+        this.insertData(db, "Soda","1 bottle",140,0,39,45,0);
+        this.insertData(db, "Tropical Fruit Salad","1 cup",70,0,17,10,0);
+        this.insertData(db, "Fruit Snacks","1 pouch",80,0,19,30,1);
+        this.insertData(db, "Raspberry Jam","1 tbsp",50,0,13,0,0);
+        this.insertData(db, "Pinto Beans","36 g",60,0,22,15,7);
+        this.insertData(db, "Orange Juice","8 fl oz",110,0,27,0,1);
+        this.insertData(db, "Energy Drink","12 oz",10,0,0,60,0);
+        this.insertData(db, "Whey Protein","1 rounded scoop",120,1,3,110,24);
+        this.insertData(db, "Potato Chips","1 oz",150,9,16,115,2);
+        this.insertData(db, "Cottage Cheese","0.5 cup",85,1,5,55,13);
+        this.insertData(db, "Corn","0.5 cup",60,1,9,200,2);
+        this.insertData(db, "Pistachios","0.25 cup",180,16,8,230,4);
+        this.insertData(db, "Cheese Ravioli","9 pieces",250,4,40,180,13);
+        this.insertData(db, "Ham & Cheese Sandwich","1 piece",270,8,40,490,12);
+        this.insertData(db, "Ground Beef Patty","1 patty",290,23,0,75,19);
+        this.insertData(db, "Whole Wheat Bread","1 slice",80,1,14,160,4);
+        this.insertData(db, "Long Grain Brown Rice","0.25 cup uncooked",150,1,32,0,3);
+        this.insertData(db, "Grade A Jumbo Eggs","1 egg",90,5,0,90,8);
+        this.insertData(db, "Salted Peanuts","25 pieces",170,12,8,72,7);
+        this.insertData(db, "Spinach","1 cup",30,0,3,120,2);
+        this.insertData(db, "Chicken Fried Rice","1 cup",240,2,44,1190,12);
+        this.insertData(db, "Honey","1 tbsp",60,0,17,0,0);
+        this.insertData(db, "Sugar","1 tsp",15,0,4,0,0);
+        this.insertData(db, "Watermelon","2.7 oz",25,0,6,1,0);
+        this.insertData(db, "Clover Honey","1 tbsp",60,0,17,0,0);
+        this.insertData(db, "Salad Dressing","2 tbsp",210,22,3,200,0);
+        this.insertData(db, "Grilled Chicken Sandwich","1 sandwich",280,9,0,490,15);
+        this.insertData(db, "Sourdough Bread","2 slices",190,3,35,270,7);
+        this.insertData(db, "Apple Pie","0.1 pie",330,18,42,160,2);
+        this.insertData(db, "Soymilk","1 cup",70,4,4,120,7);
+        this.insertData(db, "Sausage","1 link",280,23,4,810,12);
+        this.insertData(db, "Mandarin Oranges","0.5 cup",45,0,13,10,0);
+        this.insertData(db, "Steak","1 steak",856,62,0,253,72);
+        this.insertData(db, "Kentucky Fried Chicken","1 skinless breast",280,15,7,748,28);
+        this.insertData(db, "Brussels Sprouts","1 sprout",7,0,1,4,0);
+        this.insertData(db, "Beef Tenderloin Steak","3 oz",185,9,0,47,23);
+        this.insertData(db, "Butter","1 tbsp",101,11,0,1,0);
+        this.insertData(db, "Breakfast Biscuit","1 item",436,25,35,1183,17);
+        this.insertData(db, "Chicken","1 back (rotisserie)",456,34,0,926,36);
+        this.insertData(db, "Turkey","1 lb",1843,176,0,280,58);
+        this.insertData(db, "Grilled Salmon","1 serving",405,25,0,385,45);
+        this.insertData(db, "Peanut Butter","99 g",460,27,48,390,11);
+        this.insertData(db, "Tea","16 fl oz",0,0,0,15,0);
+        this.insertData(db, "Chocolate Chip Cookie","1 cookie",500,27,62,330,6);
+        this.insertData(db, "Cappuccino","12 fl oz",90,4,9,95,6);
+        this.insertData(db, "Macaroni Salad","5 oz",270,14,33,600,4);
+        this.insertData(db, "Red Bull","1 serving",110,0,28,100,0);
+        this.insertData(db, "Pepperoni Pizza","1 serving",240,11,24,630,11);
+        this.insertData(db, "Mayonnaise","0.42 oz",80,9,0,65,0);
+        this.insertData(db, "Hash Browns","1 serving",130,8,14,720,1);
+        this.insertData(db, "Apple","1 apple",65,0,17,1,0);
+        this.insertData(db, "Hamburger","1 burger",250,8,32,490,12);
     }
 
     /*  Inserts a data entry for a new food. If a data entry already exists with the same name, the insertion fails.
@@ -227,13 +306,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor logData = this.fetchLogDataFromDate(db, date);
         Cursor goals = this.fetchGoals(db);
         Map<String, Double> progress = new HashMap<String, Double>();
+        for (goals.moveToFirst(); !goals.isAfterLast(); goals.moveToNext()) {
+            String category = goals.getString(goals.getColumnIndex(KEY_CATEGORY));
+            progress.put(category, 0.0);
+        }
         for (logData.moveToFirst(); !logData.isAfterLast(); logData.moveToNext()) {
             for (goals.moveToFirst(); !goals.isAfterLast(); goals.moveToNext()) {
                 String category = goals.getString(goals.getColumnIndex(KEY_CATEGORY));
                 int value = logData.getInt(logData.getColumnIndex(category));
                 int goalValue = goals.getInt(goals.getColumnIndex(KEY_VALUE));
                 double fractionOfGoal = value / (double)goalValue; //cast to double for floating point calculation
-                progress.put(category, fractionOfGoal);
+                progress.put(category, progress.get(category) + fractionOfGoal);
             }
         }
         logData.close();
@@ -250,7 +333,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         double min = 1.0;
         String lowest = "all goals passed";
         for (Map.Entry<String, Double> entry : progress.entrySet()) {
-            if (entry.getValue() < min) {
+            if (entry.getValue() <= min) {
                 min = entry.getValue();
                 lowest = entry.getKey();
             }
@@ -265,19 +348,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues calValues = new ContentValues();
         calValues.put(KEY_CATEGORY, KEY_CAL);
         calValues.put(KEY_GOAL, 1);
-        calValues.put(KEY_VALUE, 1);
-        calValues.put(KEY_DESCRIPTION, "Consume 1500 - 200 calories per day");
+        calValues.put(KEY_VALUE, 2000);
+        calValues.put(KEY_DESCRIPTION, "Consume about 2000 calories per day");
         calValues.put(KEY_PROGRESS, "You're doing great! You have eaten an average of 1800 calories per day over the last 2 weeks! Proper calorie intake is essential in maintaining a healthy weight");
 
         db.insert(TABLE3_NAME, null, calValues);
 
-
-
         ContentValues fatValues = new ContentValues();
         fatValues.put(KEY_CATEGORY, KEY_FAT);
         fatValues.put(KEY_GOAL, 0);
-        fatValues.put(KEY_VALUE, 1);
-        fatValues.put(KEY_DESCRIPTION, "Eat less than 70g of Fat per day");
+        fatValues.put(KEY_VALUE, 70);
+        fatValues.put(KEY_DESCRIPTION, "Eat around 70g of Fat per day");
         fatValues.put(KEY_PROGRESS, "This is a new goal of yours so we don't have much to grade your performance off of.  Keep working hard and eating lean foods!");
 
         db.insert(TABLE3_NAME, null, fatValues);
@@ -303,8 +384,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues proteinValues = new ContentValues();
         proteinValues.put(KEY_CATEGORY, KEY_PROTEIN);
         proteinValues.put(KEY_GOAL, 1);
-        proteinValues.put(KEY_VALUE, 1);
-        proteinValues.put(KEY_DESCRIPTION, "Eat 20-30g of Protein per day");
+        proteinValues.put(KEY_VALUE, 25);
+        proteinValues.put(KEY_DESCRIPTION, "Eat about 25g of Protein per day");
         proteinValues.put(KEY_PROGRESS, "Historically you meet your goal on 70% of days.  Deficiencies in protein can lead to exhaustion and headaches.");
 
         db.insert(TABLE3_NAME, null, proteinValues);
