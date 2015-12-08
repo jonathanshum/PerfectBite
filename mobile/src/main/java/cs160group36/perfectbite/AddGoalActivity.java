@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AddGoalActivity extends AppCompatActivity {
 
@@ -21,6 +21,7 @@ public class AddGoalActivity extends AppCompatActivity {
     String[] type;
     String[] options;
     String currCategory;
+    String amount;
     DatabaseHelper myDbHelper;
     SQLiteDatabase myDb;
     int value;
@@ -48,19 +49,20 @@ public class AddGoalActivity extends AppCompatActivity {
         myDb = myDbHelper.getWritableDatabase();
 
 
-        TextView textView = (TextView) findViewById(R.id.consumeText);
-        textView.setText("");
+        TextView textView = (TextView) findViewById(R.id.targetText);
+        textView.setVisibility(View.GONE);
         textView = (TextView) findViewById(R.id.unitsText);
-        textView.setText("");
-        textView = (TextView) findViewById(R.id.customEndText);
-        textView.setText("");
+        textView.setVisibility(View.GONE);
+
         textView = (TextView) findViewById(R.id.inputText);
         textView.setVisibility(View.GONE);
-        Spinner spinner = (Spinner) findViewById(R.id.optionsSpinner);
-        spinner.setVisibility(View.GONE);
-        textView = (TextView) findViewById(R.id.RecommendedTextView);
-        textView.setText("");
-        textView.setVisibility(View.VISIBLE);
+
+        textView = (TextView) findViewById(R.id.fdaText);
+        textView.setVisibility(View.GONE);
+//
+//        textView = (TextView) findViewById(R.id.RecommendedTextView);
+//        textView.setText("");
+//        textView.setVisibility(View.VISIBLE);
 
 
         Spinner categorySpinner = (Spinner) findViewById(R.id.categorySpinner);
@@ -76,8 +78,34 @@ public class AddGoalActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 currCategory = categories[position];
-                TextView textView = (TextView) findViewById(R.id.customEndText);
-                textView.setText(currCategory + " per day ");
+//                TextView textView = (TextView) findViewById(R.id.customEndText);
+//                textView.setText(currCategory + " per day ");
+                if (currCategory == "Calories"){
+                    TextView textView = (TextView) findViewById(R.id.unitsText);
+                    textView.setText("cals");
+                    amount = "2000 Calories";
+                }
+                else if(currCategory == "Protein"){
+                    TextView textView = (TextView) findViewById(R.id.unitsText);
+                    textView.setText("g");
+                    amount = "50 grams";
+                }
+                else if(currCategory == "Fat"){
+                    TextView textView = (TextView) findViewById(R.id.unitsText);
+                    textView.setText("g");
+                    amount = "65 grams";
+                }
+                else if(currCategory == "Sodium"){
+                    TextView textView = (TextView) findViewById(R.id.unitsText);
+                    textView.setText("mg");
+                    amount = "2400 milligrams";
+                }
+                else if(currCategory == "Carbohydrates"){
+                    TextView textView = (TextView) findViewById(R.id.unitsText);
+                    textView.setText("g");
+                    amount = "300 grams";
+                }
+
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -99,36 +127,53 @@ public class AddGoalActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 1){
-                    TextView textView = (TextView) findViewById(R.id.consumeText);
-                    textView.setText("Consume");
-                    textView = (TextView) findViewById(R.id.unitsText);
+//                    TextView textView = (TextView) findViewById(R.id.consumeText);
+//                    textView.setText("Consume");
+//
+//                    textView.setText("g of ");
+//                    textView = (TextView) findViewById(R.id.customEndText);
+//                    textView.setVisibility(View.VISIBLE);
+//                    textView.setText(currCategory + " per day ");
+//                    Spinner spinner = (Spinner) findViewById(R.id.optionsSpinner);
+//                    spinner.setVisibility(View.VISIBLE);
+//                    TextView textView = (TextView) findViewById(R.id.RecommendedTextView);
+//                    textView.setVisibility(View.GONE);
+                    TextView textView = (TextView) findViewById(R.id.targetText);
+                    textView.setText(R.string.customText);
                     textView.setVisibility(View.VISIBLE);
-                    textView.setText("g of ");
-                    textView = (TextView) findViewById(R.id.customEndText);
-                    textView.setVisibility(View.VISIBLE);
-                    textView.setText(currCategory + " per day ");
-                    Spinner spinner = (Spinner) findViewById(R.id.optionsSpinner);
-                    spinner.setVisibility(View.VISIBLE);
-                    textView = (TextView) findViewById(R.id.RecommendedTextView);
-                    textView.setVisibility(View.GONE);
                     textView = (TextView) findViewById(R.id.inputText);
                     textView.setVisibility(View.VISIBLE);
+                    textView = (TextView) findViewById(R.id.unitsText);
+                    textView.setVisibility(View.VISIBLE);
+                    textView = (TextView) findViewById(R.id.fdaText);
+                    textView.setVisibility(View.GONE);
 
                 }
                 else if (position == 0){
-                    TextView textView = (TextView) findViewById(R.id.consumeText);
-                    textView.setText("");
-                    textView = (TextView) findViewById(R.id.unitsText);
-                    textView.setText("");
-                    textView = (TextView) findViewById(R.id.customEndText);
-                    textView.setText("");
-                    Spinner spinner = (Spinner) findViewById(R.id.optionsSpinner);
-                    spinner.setVisibility(View.GONE);
-                    textView = (TextView) findViewById(R.id.RecommendedTextView);
-                    textView.setText("This is the USDA Recommended amount!");
-                    textView.setVisibility(View.VISIBLE);
+//                    TextView textView = (TextView) findViewById(R.id.consumeText);
+//                    textView.setText("");
+
+//                    textView = (TextView) findViewById(R.id.customEndText);
+//                    textView.setText("");
+//                    Spinner spinner = (Spinner) findViewById(R.id.optionsSpinner);
+//                    spinner.setVisibility(View.GONE);
+//                    TextView textView = (TextView) findViewById(R.id.RecommendedTextView);
+//                    textView.setText("This is the USDA Recommended amount!");
+
+                    TextView textView = (TextView) findViewById(R.id.targetText);
+                    textView.setVisibility(View.GONE);
+//                    textView.setVisibility(View.VISIBLE);
                     textView = (TextView) findViewById(R.id.inputText);
                     textView.setVisibility(View.GONE);
+                    textView = (TextView) findViewById(R.id.targetText);
+                    textView.setText(R.string.fdaText);
+                    textView.setVisibility(View.VISIBLE);
+                    textView = (TextView) findViewById(R.id.fdaText);
+                    textView.setVisibility(View.VISIBLE);
+                    textView.setText(amount);
+                    textView = (TextView) findViewById(R.id.unitsText);
+                    textView.setVisibility(View.GONE);
+
                 }
             }
             @Override
@@ -138,25 +183,25 @@ public class AddGoalActivity extends AppCompatActivity {
 
         });
 
-        Spinner optionsSpinner = (Spinner) findViewById(R.id.optionsSpinner);
-// Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, options);
-// Specify the layout to use when the list of choices appears
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-// Apply the adapter to the spinner
-        optionsSpinner.setAdapter(adapter2);
-//        spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
-
-        optionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-
-        });
+//        Spinner optionsSpinner = (Spinner) findViewById(R.id.optionsSpinner);
+//// Create an ArrayAdapter using the string array and a default spinner layout
+//        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, options);
+//// Specify the layout to use when the list of choices appears
+//        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//// Apply the adapter to the spinner
+//        optionsSpinner.setAdapter(adapter2);
+////        spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
+//
+//        optionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//            }
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//
+//        });
 
 
         Button saveButton;
@@ -181,28 +226,21 @@ public class AddGoalActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getApplicationContext());
-                alertDialogBuilder.setMessage("Discard Goal?");
-
-                alertDialogBuilder.setPositiveButton("Discard", new DialogInterface.OnClickListener() {
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(AddGoalActivity.this);
+                builder.setMessage("Discard Goal?")
+                        .setTitle("");
+                builder.setPositiveButton("Yes, Discard", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        Intent intent = new Intent(getApplicationContext(), myGoalsActivity.class);
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getApplicationContext(), "Goal Discarded!",
+                                Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                         startActivity(intent);
                     }
                 });
-
-                alertDialogBuilder.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
-                Intent intent = new Intent(getApplicationContext(), myGoalsActivity.class);
-                startActivity(intent);
+                builder.setNegativeButton("No", null);
+                android.app.AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }

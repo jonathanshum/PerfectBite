@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -79,12 +80,22 @@ public class SettingsActivity extends AppCompatActivity {
                 sendRec();
             }
         });
+
+        ImageView home = (ImageView) findViewById(R.id.homeView);
+        home.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), MetricsActivity.class);
+                startActivity(i);
+            }
+        });
     }
     public void sendRec() {
         Intent intent = new Intent(this, RecommendationService.class);
         startService(intent);
         Log.d("did it", "clicked");
     }
+
+
 }
 
 class myAdapter extends ArrayAdapter {

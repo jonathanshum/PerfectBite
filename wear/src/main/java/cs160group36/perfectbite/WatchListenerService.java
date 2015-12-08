@@ -41,7 +41,8 @@ public class WatchListenerService extends WearableListenerService {
         //viewIntent.putExtra(EXTRA_EVENT_ID, eventId);
 
         Bitmap bitmap = Bitmap.createBitmap(320,320, Bitmap.Config.ARGB_8888);
-        bitmap.eraseColor(Color.argb(255, 252, 186, 89));//orange
+        //bitmap.eraseColor(Color.argb(255, 252, 186, 89));//orange
+        bitmap.eraseColor(Color.argb(255, 122, 177, 224));//blue
 
         PendingIntent viewPendingIntent =
                 PendingIntent.getActivity(this, 0, viewIntent, 0);
@@ -51,12 +52,21 @@ public class WatchListenerService extends WearableListenerService {
         NotificationCompat.BigTextStyle secondPageStyle;
         String toeat = "";
         Log.d(value, "value");
-        if (value.equals("You are low on Carbohydrates.")) {
-            toeat += "Gypsy's is nearby.\nTheir Crazy Alfredo pasta is popular.";
-        } else if (value.equals("You are low on Fat.")) {
+
+        if (value.equals("You are low on calories.")) {
+            toeat += "Smart Alec's is nearby.\nThe avocado burger is popular. ";//
+        } else if (value.equals("You are low on totalfat.")) {
+            value = "You are low on fat.";
             toeat += "Dot Island Grill is nearby.\nEat some salmon for healthy fats!";
-        } else if (value.equals("You are low on Protein.")) {
+        } else if (value.equals("You are low on carbohydrates.")) {
+            toeat += "Gypsy's is nearby.\nTheir Crazy Alfredo pasta is popular.";
+        } else if (value.equals("You are low on protein.")) {
             toeat += "Bongo Burger is nearby. \nTry their black bean burger!";
+        } else if (value.equals("You are low on sodium.")) {
+            toeat += "Try the Chicken Tortilla Soup from SF Soup Company.";
+        } else if (value.equals("You are low on all goals passed.")) {
+            value = "You have met your goals today.";
+            toeat += "Feel free to adjust your goals for future days.";
         } else {
             toeat += "Bongo Burger is nearby. \nTry their black bean burger!";
         }

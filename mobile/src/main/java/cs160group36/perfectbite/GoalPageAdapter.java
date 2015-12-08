@@ -20,6 +20,7 @@ public class GoalPageAdapter extends FragmentPagerAdapter {
     ArrayList<String> progress;
     DatabaseHelper myDbHelper;
     SQLiteDatabase myDb;
+    String category;
 
 
 
@@ -51,10 +52,24 @@ public class GoalPageAdapter extends FragmentPagerAdapter {
             String description = goals.getString(goals.getColumnIndex(KEY_DESCRIPTION));
             String prog = goals.getString(goals.getColumnIndex(KEY_PROGRESS));
 
+            category = title;
             titles.add(title);
             descriptions.add(description);
             progress.add(prog);
 
+        }
+
+        goals.close();
+
+        if (titles.size() < 1){
+            titles.add("You Have No Goals In Your Life!");
+            descriptions.add("Click on the + at the top of the screen to create a goal");
+            progress.add("");
+        }
+        else{
+            titles.add("Add A New Goal");
+            descriptions.add("Click on the + at the top of the screen to add a goal");
+            progress.add("");
         }
 
 //        titles.add("Protein");
@@ -75,11 +90,17 @@ public class GoalPageAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
 
         Bundle bundle = new Bundle();
-        bundle.putString(goalFragment.goalTitleKey, "Goal " + (position+1) + " - " + titles.get(position));
+        if (progress.get(position).equalsIgnoreCase("")){
+            bundle.putString(goalFragment.goalTitleKey, titles.get(position));
+        }
+        else{
+            bundle.putString(goalFragment.goalTitleKey, "Goal " + (position+1) + " - " + titles.get(position));
+        }
         bundle.putString(goalFragment.goalDescKey, descriptions.get(position));
         bundle.putString(goalFragment.goalProgKey, progress.get(position));
         bundle.putString(goalFragment.numGoalsKey, titles.size()+"");
         bundle.putString(goalFragment.currPositionKey, position+1+"");
+        bundle.putString(goalFragment.category, category);
         goalFragment goalFragment = new goalFragment();
         goalFragment.setArguments(bundle);
 
