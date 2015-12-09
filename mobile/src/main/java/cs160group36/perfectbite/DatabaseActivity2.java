@@ -13,16 +13,21 @@ import android.widget.TextView;
 
 import static android.database.DatabaseUtils.dumpCursorToString;
 
-public class DatabaseActivity extends AppCompatActivity implements View.OnClickListener {
+public class DatabaseActivity2 extends AppCompatActivity implements View.OnClickListener {
     DatabaseHelper myDbHelper;
     SQLiteDatabase myDb;
-//    TextView results, results2;
+    //    TextView results, results2;
     EditText editName, edit1, edit2, edit3, edit4, edit5, edit6, edit7;
+    String message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_database);
+
+        Bundle bundle = getIntent().getExtras();
+        message = bundle.getString("category");
+        message = message.substring(0,1).toUpperCase() + message.substring(1);
 
         myDbHelper = new DatabaseHelper(this);
         myDb = myDbHelper.getWritableDatabase();
@@ -30,6 +35,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 //        results = (TextView) findViewById(R.id.textView3);
 //        results2 = (TextView) findViewById(R.id.textView12);
         edit1 = (EditText) findViewById(R.id.editText2);
+        edit1.setText(message);
         edit2 = (EditText) findViewById(R.id.editText3);
         edit3 = (EditText) findViewById(R.id.editText4);
         edit4 = (EditText) findViewById(R.id.editText5);

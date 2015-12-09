@@ -31,6 +31,9 @@
         <activity android:name=".DatabaseActivity" >
         </activity>
 
+        <activity android:name=".DatabaseActivity2" >
+        </activity>
+
         <service
             android:name=".RecommendationService"
             android:enabled="true"

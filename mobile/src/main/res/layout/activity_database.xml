@@ -38,6 +38,20 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/back"
+        android:src="@drawable/backwhite"
+        android:paddingTop="11dp"
+        android:paddingBottom="11dp"
+        android:contentDescription="back"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:layout_margin="5dp"
+        />
+
 
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
@@ -46,7 +60,11 @@
     android:id="@+id/gridView"
     android:layout_below="@+id/textView"
     android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true">
+    android:layout_alignParentStart="true"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="10dp">
+
 
     <!--<TextView-->
         <!--android:layout_width="162dp"-->
@@ -71,35 +89,36 @@
         <!--android:layout_row="1"-->
         <!--android:layout_column="0" />-->
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/textView3"
-        android:layout_row="0"
-        android:layout_column="1" />
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text=""-->
+        <!--android:id="@+id/textView3"-->
+        <!--android:layout_row="0"-->
+        <!--android:layout_column="1" />-->
 
-    <TextView
-        android:layout_width="158dp"
-        android:layout_height="35dp"
-        android:text="INSERT NEW DATA: "
-        android:id="@+id/textView4"
-        android:layout_row="1"
-        android:layout_column="0" />
+    <!--<TextView-->
+        <!--android:layout_width="158dp"-->
+        <!--android:layout_height="35dp"-->
+        <!--android:text="INSERT NEW DATA: "-->
+        <!--android:id="@+id/textView4"-->
+        <!--android:layout_row="1"-->
+        <!--android:layout_column="0" />-->
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Food name: "
         android:id="@+id/textView5"
-        android:layout_row="2"
+        android:layout_row="0"
         android:layout_column="0" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/editText2"
-        android:layout_row="2"
+        android:layout_row="0"
+        android:ems="9"
         android:layout_column="1" />
 
     <TextView
@@ -107,14 +126,15 @@
         android:layout_height="wrap_content"
         android:text="Serving size: "
         android:id="@+id/textView6"
-        android:layout_row="3"
+        android:layout_row="1"
         android:layout_column="0" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/editText3"
-        android:layout_row="3"
+        android:layout_row="1"
+        android:ems="9"
         android:layout_column="1" />
 
     <TextView
@@ -122,16 +142,16 @@
         android:layout_height="wrap_content"
         android:text="Calories: "
         android:id="@+id/textView7"
-        android:layout_row="4"
+        android:layout_row="2"
         android:layout_column="0" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:ems="10"
+        android:ems="9"
         android:id="@+id/editText4"
-        android:layout_row="4"
+        android:layout_row="2"
         android:layout_column="1" />
 
     <TextView
@@ -139,16 +159,16 @@
         android:layout_height="wrap_content"
         android:text="Fat (g): "
         android:id="@+id/textView8"
-        android:layout_row="5"
+        android:layout_row="3"
         android:layout_column="0" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:ems="10"
+        android:ems="9"
         android:id="@+id/editText5"
-        android:layout_row="5"
+        android:layout_row="3"
         android:layout_column="1" />
 
     <TextView
@@ -156,16 +176,16 @@
         android:layout_height="wrap_content"
         android:text="Carbohydrates (g): "
         android:id="@+id/textView9"
-        android:layout_row="6"
+        android:layout_row="4"
         android:layout_column="0" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:ems="10"
+        android:ems="9"
         android:id="@+id/editText6"
-        android:layout_row="6"
+        android:layout_row="4"
         android:layout_column="1" />
 
     <TextView
@@ -173,16 +193,16 @@
         android:layout_height="wrap_content"
         android:text="Sodium (g): "
         android:id="@+id/textView10"
-        android:layout_row="7"
+        android:layout_row="5"
         android:layout_column="0" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:ems="10"
+        android:ems="9"
         android:id="@+id/editText7"
-        android:layout_row="7"
+        android:layout_row="5"
         android:layout_column="1" />
 
     <TextView
@@ -190,16 +210,16 @@
         android:layout_height="wrap_content"
         android:text="Protein (g): "
         android:id="@+id/textView11"
-        android:layout_row="8"
+        android:layout_row="6"
         android:layout_column="0" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:ems="10"
+        android:ems="9"
         android:id="@+id/editText8"
-        android:layout_row="8"
+        android:layout_row="6"
         android:layout_column="1" />
 
     <Button
@@ -207,16 +227,16 @@
         android:layout_height="wrap_content"
         android:text="Insert Data"
         android:id="@+id/button"
-        android:layout_row="9"
+        android:layout_row="7"
         android:layout_column="1" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/textView12"
-        android:layout_row="10"
-        android:layout_column="1" />
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text=""-->
+        <!--android:id="@+id/textView12"-->
+        <!--android:layout_row="10"-->
+        <!--android:layout_column="1" />-->
 </GridLayout>
 </RelativeLayout>
 </LinearLayout>

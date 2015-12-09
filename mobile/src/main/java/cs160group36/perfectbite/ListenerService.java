@@ -43,12 +43,17 @@ public class ListenerService extends WearableListenerService {
             Calendar c = Calendar.getInstance();
             String date = c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH);
             String time = Integer.toString(c.get(Calendar.HOUR_OF_DAY))+ ":" + Integer.toString(c.get(Calendar.MINUTE));
-            myDbHelper.insertLogData(myDb,food,date,time,1.0);
 
-//            Toast.makeText(getApplicationContext(), "Metric Data Updated", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, MetricsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            if (!myDbHelper.insertLogData(myDb,food,date,time,1.0)){
+                Intent i = new Intent(this, DatabaseActivity2.class);
+                i.putExtra("category", food);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+            } else {
+                Intent intent = new Intent(this, MetricsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
         }
 
     }

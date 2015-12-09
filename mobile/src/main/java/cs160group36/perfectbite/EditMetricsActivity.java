@@ -249,6 +249,7 @@ public class EditMetricsActivity extends DemoBase implements OnSeekBarChangeList
         Cursor data = myDbHelper.fetchLogDataFromDate(myDb,date);
         for (data.moveToLast(); !data.isBeforeFirst(); data.moveToPrevious())  {
             String name = data.getString(data.getColumnIndex("name"));
+            name = name.substring(0,1).toUpperCase() + name.substring(1);
             String serving = data.getString(data.getColumnIndex("Calories"));
             String time = data.getString(data.getColumnIndex("time"));
             HashMap<String,String> tmp = new HashMap<String, String>();

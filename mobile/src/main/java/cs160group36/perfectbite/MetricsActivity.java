@@ -160,7 +160,7 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
 
         HashMap<String,String> temp1 = new HashMap<String, String>();
         temp1.put(FIRST_COLUMN, "Recent Bites");
-        temp1.put(SECOND_COLUMN, "Servings");
+        temp1.put(SECOND_COLUMN, "Calories");
         temp1.put(THIRD_COLUMN, "Time");
         list.add(temp1);
 
@@ -170,6 +170,7 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         Cursor data = myDbHelper.fetchLogDataFromDate(myDb,date);
         for (data.moveToLast(); !data.isBeforeFirst(); data.moveToPrevious()) {
             String name = data.getString(data.getColumnIndex("name"));
+            name = name.substring(0,1).toUpperCase() + name.substring(1);
             String serving = data.getString(data.getColumnIndex("Calories"));
             String time = data.getString(data.getColumnIndex("time"));
             HashMap<String,String> tmp =new HashMap<String, String>();
@@ -249,9 +250,9 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
 
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    Toast.makeText(getApplicationContext(),
-                            result.get(0),
-                            Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(),
+//                            result.get(0),
+//                            Toast.LENGTH_SHORT).show();
                     speakOut(result.get(0));
                 }
                 break;
@@ -297,7 +298,11 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         } else {
             time = Integer.toString(c.get(Calendar.HOUR_OF_DAY)) + ":" + Integer.toString(c.get(Calendar.MINUTE));
         }
-        myDbHelper.insertLogData(myDb,s,date,time,1.0);
+        if (!myDbHelper.insertLogData(myDb,s,date,time,1.0)){
+            Intent i = new Intent(this, DatabaseActivity2.class);
+            i.putExtra("category", s);
+            startActivity(i);
+        }
         updateListView();
     }
 
