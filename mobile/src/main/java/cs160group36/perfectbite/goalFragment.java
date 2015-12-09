@@ -2,6 +2,7 @@ package cs160group36.perfectbite;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 /**
  * Created by avishah1 on 12/5/15.
@@ -26,6 +29,7 @@ public class goalFragment extends Fragment {
     public static final String numGoalsKey = "numGoals";
     public static final String currPositionKey = "currPos";
     public static final String category = "category";
+
     boolean empty = false;
     String numGoals;
     String goalTitle;
@@ -33,6 +37,8 @@ public class goalFragment extends Fragment {
     String goalProg;
     String currPos;
     String goalCategory;
+    ArrayList<String> titles;
+
 
     DatabaseHelper myDbHelper;
     SQLiteDatabase myDb;
@@ -72,9 +78,26 @@ public class goalFragment extends Fragment {
             }
         });
 
+        Cursor goals = myDbHelper.fetchGoals(myDb);
+
+        titles = new ArrayList<String>();
+        for (goals.moveToFirst(); !goals.isAfterLast(); goals.moveToNext()){
+            String title = goals.getString(goals.getColumnIndex(category));
+
+            titles.add(title);
+
+        }
+
+        
+        goals.close();
+
+        TextView textView = (TextView) view.findViewById(R.id.statusText);
+        currPos = textView.getText().toString();
+
+
         ImageView delete = (ImageView) view.findViewById(R.id.deleteImage);
         delete.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(v.getContext());
                 builder.setMessage("Delete Goal?")
                         .setTitle("");
@@ -83,6 +106,8 @@ public class goalFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getContext(), "Goal Deleted!",
                                 Toast.LENGTH_LONG).show();
+                        currPos=currPos.substring(0,1);
+                        goalCategory = titles.get(Integer.parseInt(currPos)-1);
                         myDbHelper.modifyIsGoal(myDb, goalCategory, 0);
                         Log.d("GoalCat", goalCategory);
                         Intent i = new Intent(getContext(), myGoalsActivity.class);

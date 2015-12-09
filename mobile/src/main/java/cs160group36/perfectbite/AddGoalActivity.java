@@ -24,6 +24,7 @@ public class AddGoalActivity extends AppCompatActivity {
     String amount;
     DatabaseHelper myDbHelper;
     SQLiteDatabase myDb;
+    String units;
     int value;
 
     @Override
@@ -80,31 +81,39 @@ public class AddGoalActivity extends AppCompatActivity {
                 currCategory = categories[position];
 //                TextView textView = (TextView) findViewById(R.id.customEndText);
 //                textView.setText(currCategory + " per day ");
-                if (currCategory == "Calories"){
+                if (currCategory.equalsIgnoreCase("Calories")){
                     TextView textView = (TextView) findViewById(R.id.unitsText);
                     textView.setText("cals");
-                    amount = "2000 Calories";
+                    amount = "2000";
+                    units = "Calories";
                 }
-                else if(currCategory == "Protein"){
+                else if(currCategory.equalsIgnoreCase("Protein")){
                     TextView textView = (TextView) findViewById(R.id.unitsText);
                     textView.setText("g");
-                    amount = "50 grams";
+                    amount = "50";
+                    units = "Grams";
                 }
-                else if(currCategory == "Fat"){
+                else if(currCategory.equalsIgnoreCase("Fat")){
                     TextView textView = (TextView) findViewById(R.id.unitsText);
                     textView.setText("g");
-                    amount = "65 grams";
+                    amount = "65";
+                    units = "Grams";
                 }
-                else if(currCategory == "Sodium"){
+                else if(currCategory.equalsIgnoreCase("Sodium")){
                     TextView textView = (TextView) findViewById(R.id.unitsText);
                     textView.setText("mg");
-                    amount = "2400 milligrams";
+                    amount = "2400";
+                    units = "Milligrams";
                 }
-                else if(currCategory == "Carbohydrates"){
+                else if(currCategory.equalsIgnoreCase("Carbohydrates")){
                     TextView textView = (TextView) findViewById(R.id.unitsText);
                     textView.setText("g");
-                    amount = "300 grams";
+                    amount = "300";
+                    units = "Grams";
                 }
+                TextView textView = (TextView) findViewById(R.id.fdaText);
+                textView.setText(amount + " " + units);
+
 
             }
             @Override
@@ -127,26 +136,18 @@ public class AddGoalActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 1){
-//                    TextView textView = (TextView) findViewById(R.id.consumeText);
-//                    textView.setText("Consume");
 //
-//                    textView.setText("g of ");
-//                    textView = (TextView) findViewById(R.id.customEndText);
-//                    textView.setVisibility(View.VISIBLE);
-//                    textView.setText(currCategory + " per day ");
-//                    Spinner spinner = (Spinner) findViewById(R.id.optionsSpinner);
-//                    spinner.setVisibility(View.VISIBLE);
-//                    TextView textView = (TextView) findViewById(R.id.RecommendedTextView);
-//                    textView.setVisibility(View.GONE);
                     TextView textView = (TextView) findViewById(R.id.targetText);
                     textView.setText(R.string.customText);
                     textView.setVisibility(View.VISIBLE);
                     textView = (TextView) findViewById(R.id.inputText);
                     textView.setVisibility(View.VISIBLE);
                     textView = (TextView) findViewById(R.id.unitsText);
+                    textView.setText(units);
                     textView.setVisibility(View.VISIBLE);
                     textView = (TextView) findViewById(R.id.fdaText);
                     textView.setVisibility(View.GONE);
+
 
                 }
                 else if (position == 0){
@@ -170,9 +171,12 @@ public class AddGoalActivity extends AppCompatActivity {
                     textView.setVisibility(View.VISIBLE);
                     textView = (TextView) findViewById(R.id.fdaText);
                     textView.setVisibility(View.VISIBLE);
-                    textView.setText(amount);
+                    textView.setText(amount + " "+ units);
                     textView = (TextView) findViewById(R.id.unitsText);
                     textView.setVisibility(View.GONE);
+
+//                TextView textView = (TextView) findViewById(R.id.customEndText);
+//                textView.setText(currCategory + " per day ");
 
                 }
             }
@@ -211,9 +215,11 @@ public class AddGoalActivity extends AppCompatActivity {
             public void onClick(View v) {
                 TextView textView = (TextView) findViewById(R.id.inputText);
                 String valueString = textView.getText().toString();
+                if (valueString.equalsIgnoreCase("")){
+                    valueString = amount;
+                }
                 value = Integer.parseInt(valueString);
-                String progressString;
-                myDbHelper.modifyEntireGoal(myDb, currCategory, 1, value, "Eat less than " + valueString +"g"+" per day", "This goal is too new to give you progress feedback.  Keep eating healthy and we'll have data for you soon!" );
+                myDbHelper.modifyEntireGoal(myDb, currCategory, 1, value, "Eat " + valueString + " " + units +" per day", "This goal is too new to give you progress feedback.  Keep eating healthy and we'll have data for you soon!" );
                 Intent intent = new Intent(getApplicationContext(), myGoalsActivity.class);
                 startActivity(intent);
             }
