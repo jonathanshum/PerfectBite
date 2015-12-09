@@ -291,7 +291,12 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         }
         Calendar c = Calendar.getInstance();
         String date = c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH);
-        String time = Integer.toString(c.get(Calendar.HOUR_OF_DAY))+ ":" + Integer.toString(c.get(Calendar.MINUTE));
+        String time;
+        if (c.get(Calendar.MINUTE) < 10) {
+            time = Integer.toString(c.get(Calendar.HOUR_OF_DAY)) + ":0" + Integer.toString(c.get(Calendar.MINUTE));
+        } else {
+            time = Integer.toString(c.get(Calendar.HOUR_OF_DAY)) + ":" + Integer.toString(c.get(Calendar.MINUTE));
+        }
         myDbHelper.insertLogData(myDb,s,date,time,1.0);
         updateListView();
     }
