@@ -76,6 +76,7 @@ public class WatchListenerService extends WearableListenerService {
                             .setSmallIcon(R.drawable.logo3)
                             .setContentTitle("Meal Reminder")
                             .setContentText("Eat Lunch")
+                            .setPriority(NotificationCompat.PRIORITY_MAX)
                             .setContentIntent(viewPendingIntent);
 
             // Create a big text style for the second page
@@ -88,6 +89,7 @@ public class WatchListenerService extends WearableListenerService {
                             .setSmallIcon(R.drawable.logo3)
                             .setContentTitle("Nutrient Reminder")
                             .setContentText(value)
+                            .setPriority(NotificationCompat.PRIORITY_MAX)
                             .setContentIntent(viewPendingIntent);
 
             // Create a big text style for the second page
@@ -96,7 +98,9 @@ public class WatchListenerService extends WearableListenerService {
         }
 
         // Create second page notification
-        Notification secondPageNotification = new NotificationCompat.Builder(this).setStyle(secondPageStyle).build();
+        Notification secondPageNotification = new NotificationCompat.Builder(this)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setStyle(secondPageStyle).build();
 
         // Extend the notification builder with the second page
         Notification notification = notificationBuilder.extend(new NotificationCompat
