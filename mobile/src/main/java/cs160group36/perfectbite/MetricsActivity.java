@@ -131,7 +131,7 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         header.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 sendRec();
-                Toast.makeText(MetricsActivity.this, "Recommendation Service Activated", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MetricsActivity.this, "Recommendation Service Activated", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -181,25 +181,6 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
             }
         }
         data.close();
-
-        HashMap<String,String> temp=new HashMap<String, String>();
-        temp.put(FIRST_COLUMN, "Apple");
-        temp.put(SECOND_COLUMN, "2");
-        temp.put(THIRD_COLUMN, "1:20");
-
-        HashMap<String,String> temp2=new HashMap<String, String>();
-        temp2.put(FIRST_COLUMN, "Watermelon");
-        temp2.put(SECOND_COLUMN, "3");
-        temp2.put(THIRD_COLUMN, "2:01");
-
-        HashMap<String,String> temp3=new HashMap<String, String>();
-        temp3.put(FIRST_COLUMN, "Chicken Pot Pie");
-        temp3.put(SECOND_COLUMN, "5");
-        temp3.put(THIRD_COLUMN, "5:40");
-
-        list.add(temp);
-        list.add(temp2);
-        list.add(temp3);
 
         CustomAdapter adapter = new CustomAdapter(this, list);
         listView.setAdapter(adapter);
@@ -310,7 +291,12 @@ public class MetricsActivity extends DemoBase implements OnSeekBarChangeListener
         }
         Calendar c = Calendar.getInstance();
         String date = c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH);
-        String time = Integer.toString(c.get(Calendar.HOUR_OF_DAY))+ ":" + Integer.toString(c.get(Calendar.MINUTE));
+        String time;
+        if (c.get(Calendar.MINUTE) < 10) {
+            time = Integer.toString(c.get(Calendar.HOUR_OF_DAY)) + ":0" + Integer.toString(c.get(Calendar.MINUTE));
+        } else {
+            time = Integer.toString(c.get(Calendar.HOUR_OF_DAY)) + ":" + Integer.toString(c.get(Calendar.MINUTE));
+        }
         myDbHelper.insertLogData(myDb,s,date,time,1.0);
         updateListView();
     }

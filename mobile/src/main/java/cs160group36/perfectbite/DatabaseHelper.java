@@ -359,7 +359,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         fatValues.put(KEY_GOAL, 0);
         fatValues.put(KEY_VALUE, 70);
         fatValues.put(KEY_DESCRIPTION, "Eat around 70g of Fat per day");
-        fatValues.put(KEY_PROGRESS, "This is a new goal of yours so we don't have much to grade your performance off of.  Keep working hard and eating lean foods!");
+        fatValues.put(KEY_PROGRESS, "This is a new goal of yours so we don't have much to grade your performance off of. Keep working hard and eating lean foods!");
 
         db.insert(TABLE3_NAME, null, fatValues);
 
@@ -386,7 +386,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         proteinValues.put(KEY_GOAL, 1);
         proteinValues.put(KEY_VALUE, 25);
         proteinValues.put(KEY_DESCRIPTION, "Eat about 25g of Protein per day");
-        proteinValues.put(KEY_PROGRESS, "Historically you meet your goal on 70% of days.  Deficiencies in protein can lead to exhaustion and headaches.");
+        proteinValues.put(KEY_PROGRESS, "Historically you meet your goal on 70% of days. Deficiencies in protein can lead to exhaustion and headaches.");
 
         db.insert(TABLE3_NAME, null, proteinValues);
     }

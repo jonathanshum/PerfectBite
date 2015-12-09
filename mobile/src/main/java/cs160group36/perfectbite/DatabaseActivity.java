@@ -1,5 +1,6 @@
 package cs160group36.perfectbite;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import static android.database.DatabaseUtils.dumpCursorToString;
@@ -27,7 +29,6 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
         results = (TextView) findViewById(R.id.textView3);
         results2 = (TextView) findViewById(R.id.textView12);
-        editName = (EditText) findViewById(R.id.editText);
         edit1 = (EditText) findViewById(R.id.editText2);
         edit2 = (EditText) findViewById(R.id.editText3);
         edit3 = (EditText) findViewById(R.id.editText4);
@@ -36,31 +37,37 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         edit6 = (EditText) findViewById(R.id.editText7);
         edit7 = (EditText) findViewById(R.id.editText8);
 
-        Button fetchButton = (Button) findViewById(R.id.button2);
-        fetchButton.setOnClickListener(this);
         Button insertButton = (Button) findViewById(R.id.button);
         insertButton.setOnClickListener(this);
+        ImageView settings = (ImageView) findViewById(R.id.settingsView);
+        settings.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), myGoalsActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button2:
-                if (editName.getText().toString().equals("")) {
-                    results.setText("Please input a food name above.");
-                }
-                else {
-                    Cursor c = myDbHelper.fetchDataFromName(myDb, editName.getText().toString());
-                    if (!c.moveToFirst()) {
-                        results.setText("No such entry found.");
-                    }
-                    else {
-                        String s = dumpCursorToString(c);
-                        results.setText(s);
-                    }
-                    c.close();
-                }
-                break;
+//            case R.id.button2:
+//                if (editName.getText().toString().equals("")) {
+//                    results.setText("Please input a food name above.");
+//                }
+//                else {
+//                    Cursor c = myDbHelper.fetchDataFromName(myDb, editName.getText().toString());
+//                    if (!c.moveToFirst()) {
+//                        results.setText("No such entry found.");
+//                    }
+//                    else {
+//                        String s = dumpCursorToString(c);
+//                        results.setText(s);
+//                    }
+//                    c.close();
+//                }
+//                break;
             case R.id.button:
                 String s1 = edit1.getText().toString();
                 String s2 = edit2.getText().toString();
