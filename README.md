@@ -8,7 +8,7 @@ This repository contains both an Android mobile and wear application. The smartw
 
 ## Design
 
-![alt-text-1](https://cloud.githubusercontent.com/assets/3961167/18695119/66339de8-7f64-11e6-99a9-ec93eebab0cf.gif) ![alt-text-2](https://cloud.githubusercontent.com/assets/3961167/18695120/66478696-7f64-11e6-8900-0370892cc4fb.gif)
+![alt-text-1](https://cloud.githubusercontent.com/assets/3961167/18695536/5d0a1730-7f67-11e6-8da6-68525e759f6c.gif) ![alt-text-2](https://cloud.githubusercontent.com/assets/3961167/18695506/25292c84-7f67-11e6-8c0b-1094ffc5fe1e.gif)
 
 The mobile interface allows users to:
 
